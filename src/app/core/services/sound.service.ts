@@ -56,6 +56,77 @@ export class SoundService {
     src.stop(t + dur);
   }
 
+  leaves(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 0.5;
+
+    // dry, papery noise — the rustle of a handful of leaves pulled off a tree
+    const frames = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    data.forEach((_, i) => {
+      const p = i / frames;
+      // two soft swells so it reads as a grab-and-release rustle, not one hiss
+      const env = (Math.exp(-12 * p) + 0.6 * Math.exp(-7 * Math.abs(p - 0.4))) * (1 - p);
+      // sparse grains crinkle the noise into many tiny leaf flutters
+      const crinkle = Math.random() < 0.55 ? 1 : 0.2;
+      data[i] = (Math.random() * 2 - 1) * env * crinkle;
+    });
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    // trim rumble, then a moving bandpass for the brittle leafy texture
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 2200;
+
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(4200, t);
+    bp.frequency.linearRampToValueAtTime(6200, t + dur);
+    bp.Q.value = 0.8;
+
+    // the rustle sits quietly underneath the melodic shimmer
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.12, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    src.connect(hp).connect(bp).connect(g).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur);
+
+    // warm pentatonic shimmer on top for a cozy, rewarding vibe
+    const notes = [659.25, 880, 1318.5]; // E5, A5, E6
+    notes.forEach((freq, i) => {
+      const start = t + i * 0.08;
+
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+
+      // a faintly detuned twin gives the note a soft, glistening shimmer
+      const shimmer = ctx.createOscillator();
+      shimmer.type = 'triangle';
+      shimmer.frequency.value = freq * 1.004;
+
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.0001, start);
+      ng.gain.exponentialRampToValueAtTime(0.055, start + 0.03);
+      ng.gain.exponentialRampToValueAtTime(0.0001, start + 0.45);
+
+      osc.connect(ng);
+      shimmer.connect(ng);
+      ng.connect(ctx.destination);
+      osc.start(start);
+      shimmer.start(start);
+      osc.stop(start + 0.46);
+      shimmer.stop(start + 0.46);
+    });
+  }
+
   pickUp(): void {
     const ctx = this.audio();
     if (!ctx) return;

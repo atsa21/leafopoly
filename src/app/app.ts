@@ -54,6 +54,12 @@ export class App {
     this.scale.set(Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H));
   }
 
+  /** The active leaf-gain burst for a given player slot, as a 0- or 1-item list for `@for`. */
+  protected leafBurst(slot: number) {
+    const g = this.game.leafGain();
+    return g && g.slot === slot ? [g] : [];
+  }
+
   bg = computed(() => {
     const base = { cork: '#9c7d52', slate: '#5d6673', olive: '#6d7144' }[this.game.tableColor()];
     return `radial-gradient(1200px 500px at 50% -10%, rgba(255,245,220,.10), transparent 60%),

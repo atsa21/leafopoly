@@ -122,6 +122,7 @@
 }
 
 .pleaves {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
@@ -129,6 +130,126 @@
   font-family: var(--font-script);
   font-weight: 700;
   color: var(--leaf);
+}
+
+.leaf-burst {
+  position: absolute;
+  left: 6px;
+  top: -2px;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.lb-num {
+  position: absolute;
+  left: 34px;
+  top: 2px;
+  font-family: var(--font-script);
+  font-weight: 700;
+  font-size: 26px;
+  white-space: nowrap;
+  color: var(--leaf);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  animation: lb-rise 1.3s ease-out forwards;
+}
+
+.lb-leaf {
+  position: absolute;
+  top: 6px;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+}
+
+.lb-leaf.l1 {
+  left: 0;
+  animation: lb-float-1 1.2s ease-out forwards;
+}
+
+.lb-leaf.l2 {
+  left: 14px;
+  animation: lb-float-2 1.3s 0.08s ease-out forwards;
+}
+
+.lb-leaf.l3 {
+  left: -8px;
+  animation: lb-float-3 1.25s 0.04s ease-out forwards;
+}
+
+@keyframes lb-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.7);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1.08);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-18px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) scale(0.95);
+  }
+}
+
+@keyframes lb-float-1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 4px) rotate(0);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-14px, -40px) rotate(-40deg);
+  }
+}
+
+@keyframes lb-float-2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 4px) rotate(0);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(18px, -46px) rotate(50deg);
+  }
+}
+
+@keyframes lb-float-3 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 4px) rotate(0);
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-2px, -52px) rotate(-15deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-num {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .lb-leaf {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 .pleaves .leaf-icon {
@@ -150,8 +271,7 @@
 
 .pmeta {
   font-family: var(--font-type);
-  font-size: 10px;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--ink-muted);
   margin-top: var(--space-2);
 }
