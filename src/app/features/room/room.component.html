@@ -25,7 +25,7 @@
           (pointerdown)="onDown($event, r.id)"
         >
           @if (r.key === 'lamp' || r.key === 'ceiling_lamp') {
-            <span class="lamp-glow" aria-hidden="true"></span>
+            <span class="lamp-glow" [class.ceiling]="r.key === 'ceiling_lamp'" aria-hidden="true"></span>
           }
 
           @switch (r.key) {
