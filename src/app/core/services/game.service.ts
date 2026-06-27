@@ -363,6 +363,7 @@ export class GameService {
         const leaves = pos === 0 ? p.leaves + this.passGoBonus() : p.leaves;
         return { ...p, pos, leaves };
       });
+      this.sound.step();
       if (--steps > 0) this.timer = setTimeout(step, 230);
       else this.timer = setTimeout(() => this.land(), 340);
     };
@@ -384,6 +385,7 @@ export class GameService {
         this.players.update((list) =>
           list.map((p, i) => (i === slot ? { ...p, pos: (p.pos + 1) % 24 } : p)),
         );
+        this.sound.step();
         if (--steps > 0) this.timer = setTimeout(step, 230);
         else this.rolling.set(false);
       };
