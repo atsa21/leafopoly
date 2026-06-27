@@ -13,7 +13,7 @@ export const SHOPS: Record<EShopCategory, ShopDef> = {
       { key: 'table', name: 'Side Table', tag: 'sturdy oak', price: 11, size: 1.2 },
       { key: 'bed', name: 'Cosy Bed', tag: 'comfy nap', price: 20, size: 3 },
       { key: 'desk', name: 'Study Desk', tag: 'get to work', price: 15, size: 3 },
-      { key: 'chair', name: 'Wooden Chair', tag: 'take a seat', price: 10, size: 1.6 },
+      { key: 'chair', name: 'Wooden Chair', tag: 'take a seat', price: 10, size: 2.5 },
     ],
   },
   [EShopCategory.Decor]: {
