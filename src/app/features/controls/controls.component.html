@@ -1,0 +1,32 @@
+<div class="panel">
+  <div class="turn" [style.color]="game.cur().color">{{ game.cur().name }}'s turn</div>
+
+  <div class="row">
+    <div class="dice" role="img" [attr.aria-label]="'dice showing ' + game.dice()">
+      @for (on of game.dicePips(); track $index) {
+        <span class="cell">
+          @if (on) {
+            <i class="pip"></i>
+          }
+        </span>
+      }
+    </div>
+    <button
+      class="roll"
+      type="button"
+      [disabled]="game.rolling() || !game.isMyTurn()"
+      (click)="game.roll()"
+    >
+      {{ rollLabel() }}
+    </button>
+  </div>
+
+  @if (game.cur().coupons.length) {
+    <div class="hand">
+      <span class="hand-label">in hand:</span>
+      @for (v of game.cur().coupons; track $index) {
+        <span class="chip">{{ v }}% off</span>
+      }
+    </div>
+  }
+</div>

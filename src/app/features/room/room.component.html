@@ -1,0 +1,42 @@
+<div class="backdrop" (click)="game.closeRoom()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="room-title" (click)="$event.stopPropagation()">
+    <header>
+      <h2 id="room-title">{{ owner().name }}'s Room</h2>
+      <button type="button" (click)="game.closeRoom()">Close ×</button>
+    </header>
+
+    <div #surface class="room" (pointermove)="onMove($event)" (pointerup)="onUp($event)">
+      <div class="wall ceil"></div>
+      <div class="wall wleft"></div>
+      <div class="wall wright"></div>
+      <div class="wall floor"></div>
+      <div class="back"></div>
+
+      @for (r of owner().room; track r.id) {
+        <div
+          class="thing"
+          [style.left.px]="r.x"
+          [style.top.px]="r.y"
+          [style.width.px]="size(r.key)"
+          [style.height.px]="height(r.key)"
+          [attr.aria-label]="label(r.key)"
+          (pointerdown)="onDown($event, r.id)"
+        >
+          @if (r.key === 'curtain') {
+            <app-item-icon [key]="r.key" [stretch]="true" viewBox="0 0 60 88" />
+          } @else {
+            <app-item-icon [key]="r.key" />
+          }
+        </div>
+      }
+
+      @if (owner().room.length === 0) {
+        <div class="empty">
+          <div>Nothing here yet…</div>
+          <small>land on a store and buy something to fill the room</small>
+        </div>
+      }
+    </div>
+    <p class="hint">Drag your things anywhere on the walls or floor to arrange them.</p>
+  </div>
+</div>

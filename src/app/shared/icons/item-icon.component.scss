@@ -1,0 +1,40 @@
+app-item-icon,
+.icon-host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.icon-host > svg {
+  display: block;
+}
+
+.gust-line {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: gust-wave 1.6s ease-in-out infinite;
+}
+
+.gust-line-2 {
+  animation-delay: -0.4s;
+}
+
+.gust-line-3 {
+  animation-delay: -0.8s;
+}
+
+@keyframes gust-wave {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(2.5px, -1.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gust-line {
+    animation: none;
+  }
+}

@@ -1,0 +1,470 @@
+import { Service, signal, computed, inject, afterNextRender } from '@angular/core';
+import { Player, View, TableColor, RoomItem } from '../models';
+import { ITEMS, LUCKY_ITEMS, buildBoard } from '../constants';
+import { MatchSnapshot, MultiplayerService, RollAnim } from './multiplayer.service';
+import { SoundService } from './sound.service';
+
+const SAVE_KEY = 'leafopoly_v2';
+const SETTINGS_KEY = 'leafopoly_settings_v1';
+
+const DEFAULT_NAMES = ['Robin', 'Sage'];
+const PLAYER_COLORS = ['#b0473b', '#36617e'];
+
+@Service()
+export class GameService {
+  private mp = inject(MultiplayerService);
+  private sound = inject(SoundService);
+  /** Guard so applying a remote snapshot doesn't echo back out as a push. */
+  private applying = false;
+  // ---- tunables (settings) ----
+  startingLeaves = signal(50);
+  passGoBonus = signal(10);
+  playerNames = signal<string[]>([...DEFAULT_NAMES]);
+  tableColor = signal<TableColor>('slate');
+
+  // Rebuilds whenever the pass-go bonus changes so the START label stays in sync.
+  board = computed(() => buildBoard(this.passGoBonus()));
+
+  // ---- state signals ----
+  players = signal<Player[]>([]);
+  current = signal(0);
+  view = signal<View>('board');
+  dice = signal(1);
+  rolling = signal(false);
+  toastMsg = signal('');
+  log = signal<string[]>([]);
+
+  activeShop = signal<string | null>(null);
+  cutStep = signal(0);
+  couponVal = signal(0);
+  couponDone = signal(false);
+  roomOwner = signal(0);
+
+  private timer: ReturnType<typeof setTimeout> | undefined;
+  private toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+  constructor() {
+    this.players.set(this.freshPlayers());
+    // Mirror the other player's moves into local state when online.
+    this.mp.onRemote = (s) => this.applyRemote(s);
+    this.mp.onAnim = (a) => this.playWatch(a);
+    // localStorage is browser-only; load saved state after hydration to
+    // avoid an SSR/client markup mismatch.
+    afterNextRender(() => {
+      this.loadSettings();
+      const saved = this.load();
+      if (saved) this.players.set(saved);
+      else this.players.set(this.freshPlayers());
+    });
+  }
+
+  // ---- derived ----
+  cur = computed(() => this.players()[this.current()]);
+  /** Offline: always your turn. Online: only when the active slot is yours. */
+  isMyTurn = computed(() => !this.mp.online() || this.current() === this.mp.mySlot());
+  online = computed(() => this.mp.online());
+  /** The slot you control (0 offline / when hosting, 1 when you joined). */
+  mySlot = computed(() => this.mp.mySlot());
+  dicePips = computed(() => {
+    const m: Record<number, number[]> = {
+      1: [4],
+      2: [0, 8],
+      3: [0, 4, 8],
+      4: [0, 2, 6, 8],
+      5: [0, 2, 4, 6, 8],
+      6: [0, 2, 3, 5, 6, 8],
+    };
+    const set = new Set(m[this.dice()] ?? []);
+    return Array.from({ length: 9 }, (_, i) => set.has(i));
+  });
+
+  // ---- setup / persistence ----
+  private freshPlayers(): Player[] {
+    return this.playerNames().map((name, i) => ({
+      name,
+      color: PLAYER_COLORS[i] ?? '#5d7d39',
+      init: (name.trim()[0] ?? '?').toUpperCase(),
+      leaves: this.startingLeaves(),
+      pos: 0,
+      coupons: [],
+      room: [],
+      skip: false,
+    }));
+  }
+
+  private load(): Player[] | null {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      const s = JSON.parse(raw) as {
+        players?: unknown;
+        current?: unknown;
+        dice?: unknown;
+        log?: unknown;
+      };
+      if (!Array.isArray(s.players)) return null;
+      this.current.set(Number.isInteger(s.current) ? (s.current as number) : 0);
+      this.dice.set((s.dice as number) || 1);
+      this.log.set(Array.isArray(s.log) ? (s.log as string[]) : []);
+      // merge so older saves gain newer fields
+      return (s.players as Array<Partial<Player>>).map((p) => ({
+        coupons: [],
+        room: [],
+        skip: false,
+        leaves: 0,
+        pos: 0,
+        ...p,
+      })) as Player[];
+    } catch {
+      return null;
+    }
+  }
+
+  private save() {
+    try {
+      localStorage.setItem(
+        SAVE_KEY,
+        JSON.stringify({
+          players: this.players(),
+          current: this.current(),
+          dice: this.dice(),
+          log: this.log(),
+        }),
+      );
+    } catch {
+      /* storage unavailable (SSR / private mode) — ignore */
+    }
+  }
+
+  // ---- settings persistence ----
+  private loadSettings() {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw) as {
+        startingLeaves?: unknown;
+        passGoBonus?: unknown;
+        playerNames?: unknown;
+      };
+      if (Number.isFinite(s.startingLeaves)) this.startingLeaves.set(s.startingLeaves as number);
+      if (Number.isFinite(s.passGoBonus)) this.passGoBonus.set(s.passGoBonus as number);
+      if (Array.isArray(s.playerNames) && s.playerNames.length) {
+        this.playerNames.set(
+          DEFAULT_NAMES.map((d, i) => {
+            const n = s.playerNames as unknown[];
+            return typeof n[i] === 'string' && (n[i] as string).trim() ? (n[i] as string) : d;
+          }),
+        );
+      }
+    } catch {
+      /* malformed / unavailable — keep defaults */
+    }
+  }
+
+  private saveSettings() {
+    try {
+      localStorage.setItem(
+        SETTINGS_KEY,
+        JSON.stringify({
+          startingLeaves: this.startingLeaves(),
+          passGoBonus: this.passGoBonus(),
+          playerNames: this.playerNames(),
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // ---- settings UI ----
+  openSettings() {
+    this.view.set('settings');
+  }
+
+  closeSettings() {
+    this.view.set('board');
+  }
+
+  /**
+   * Persist the chosen settings. Your name and the pass-go bonus apply to the
+   * game in progress; the new starting-leaves amount takes effect on New Game.
+   */
+  applySettings(s: { name: string; startingLeaves: number; passGoBonus: number }) {
+    const slot = this.mySlot();
+    const name = s.name.trim() || DEFAULT_NAMES[slot] || 'Player';
+    this.playerNames.update((names) => {
+      const next = [...names];
+      next[slot] = name;
+      return next;
+    });
+    this.startingLeaves.set(Math.max(0, Math.round(s.startingLeaves) || 0));
+    this.passGoBonus.set(Math.max(0, Math.round(s.passGoBonus) || 0));
+    this.saveSettings();
+    // Rename your own player without disturbing leaves / positions.
+    this.players.update((list) =>
+      list.map((p, i) =>
+        i === slot ? { ...p, name, init: (name[0] ?? '?').toUpperCase() } : p,
+      ),
+    );
+    this.save();
+    this.sync();
+  }
+
+  newGame() {
+    clearTimeout(this.timer);
+    clearTimeout(this.toastTimer);
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch {
+      /* ignore */
+    }
+    this.players.set(this.freshPlayers());
+    this.current.set(0);
+    this.view.set('board');
+    this.dice.set(1);
+    this.rolling.set(false);
+    this.toastMsg.set('');
+    this.log.set([]);
+    this.sync();
+  }
+
+  // ---- helpers that mutate one player immutably ----
+  private patchCurrent(fn: (p: Player) => Player) {
+    this.players.update((list) => list.map((p, i) => (i === this.current() ? fn({ ...p }) : p)));
+    this.save();
+  }
+
+  private toast(msg: string) {
+    clearTimeout(this.toastTimer);
+    const name = this.cur().name;
+    this.toastMsg.set(msg);
+    this.log.update((l) => [name + ': ' + msg, ...l].slice(0, 7));
+    this.save();
+    this.toastTimer = setTimeout(() => this.toastMsg.set(''), 2900);
+  }
+
+  /** A transient popup for the watcher; the log line itself arrives via the synced snapshot. */
+  private watchToast(msg: string) {
+    clearTimeout(this.toastTimer);
+    this.toastMsg.set(msg);
+    this.toastTimer = setTimeout(() => this.toastMsg.set(''), 2900);
+  }
+
+  // ---- the turn loop ----
+  roll() {
+    if (this.rolling() || this.view() !== 'board' || !this.isMyTurn()) return;
+    if (this.cur().skip) {
+      this.mp.pushAnim({ n: 0, slot: this.current(), skip: true });
+      this.patchCurrent((p) => ({ ...p, skip: false }));
+      this.toast('skips this turn.');
+      return this.endTurn();
+    }
+    // Decide the result up front so the watching player can replay the same roll.
+    const n = 1 + Math.floor(Math.random() * 6);
+    this.mp.pushAnim({ n, slot: this.current() });
+    this.rattle(n, () => this.walk(n));
+  }
+
+  /** The cosmetic dice tumble, settling on `final`, then `done()`. Shared by both players. */
+  private rattle(final: number, done: () => void) {
+    this.rolling.set(true);
+    this.toastMsg.set('');
+    this.sound.dice();
+    let ticks = 0;
+    const tick = () => {
+      this.dice.set(1 + Math.floor(Math.random() * 6));
+      if (++ticks < 8) {
+        this.timer = setTimeout(tick, 70);
+      } else {
+        this.dice.set(final);
+        this.timer = setTimeout(done, 360);
+      }
+    };
+    tick();
+  }
+
+  private walk(n: number) {
+    let steps = n;
+    const step = () => {
+      this.patchCurrent((p) => {
+        const pos = (p.pos + 1) % 24;
+        const leaves = pos === 0 ? p.leaves + this.passGoBonus() : p.leaves;
+        return { ...p, pos, leaves };
+      });
+      if (--steps > 0) this.timer = setTimeout(step, 230);
+      else this.timer = setTimeout(() => this.land(), 340);
+    };
+    step();
+  }
+
+  /** Watcher side: replay the active player's turn with no rule effects or turn change. */
+  private playWatch(a: RollAnim) {
+    clearTimeout(this.timer);
+    if (a.skip) {
+      const name = this.players()[a.slot]?.name ?? 'They';
+      this.watchToast(name + ' skips this turn.');
+      return;
+    }
+    this.rattle(a.n, () => {
+      let steps = a.n;
+      const slot = a.slot;
+      const step = () => {
+        this.players.update((list) =>
+          list.map((p, i) => (i === slot ? { ...p, pos: (p.pos + 1) % 24 } : p)),
+        );
+        if (--steps > 0) this.timer = setTimeout(step, 230);
+        else this.rolling.set(false);
+      };
+      step();
+    });
+  }
+
+  private land() {
+    this.rolling.set(false);
+    const sq = this.board()[this.cur().pos];
+    if (sq.kind === 'shop') {
+      this.activeShop.set(sq.shop!);
+      this.view.set('shop');
+    } else if (sq.kind === 'coupon') {
+      this.cutStep.set(0);
+      this.couponDone.set(false);
+      this.couponVal.set([25, 30, 50][Math.floor(Math.random() * 3)]);
+      this.view.set('coupon');
+    } else if (sq.kind === 'start') {
+      this.toast('home at START — collect ' + this.passGoBonus() + '.');
+      this.endTurn();
+    } else if (sq.kind === 'luckyfind') {
+      const key = LUCKY_ITEMS[Math.floor(Math.random() * LUCKY_ITEMS.length)];
+      this.patchCurrent((p) => ({ ...p, room: [...p.room, this.newRoomItem(key)] }));
+      this.toast('lucky find — a free ' + ITEMS[key].name + ' for your room!');
+      this.endTurn();
+    } else {
+      // leaf or rest
+      const d = sq.delta || 0;
+      if (d || sq.skip)
+        this.patchCurrent((p) => ({
+          ...p,
+          leaves: Math.max(0, p.leaves + d),
+          skip: sq.skip ? true : p.skip,
+        }));
+      this.toast(sq.msg || 'a quiet square.');
+      this.endTurn();
+    }
+  }
+
+  private endTurn() {
+    this.current.update((c) => (c + 1) % this.players().length);
+    this.view.set('board');
+    this.save();
+    this.sync();
+  }
+
+  // ---- online sync ----
+  /** Host a new online match; returns the join code (slot 0 = you). */
+  hostMatch(): Promise<string> {
+    return this.mp.host(this.snapshot());
+  }
+
+  /** Join an existing match by code (slot 1 = you). */
+  joinMatch(id: string) {
+    this.mp.join(id);
+  }
+
+  private snapshot() {
+    return {
+      players: this.players(),
+      current: this.current(),
+      dice: this.dice(),
+      log: this.log(),
+    };
+  }
+
+  private sync() {
+    if (this.mp.online() && !this.applying) this.mp.push(this.snapshot());
+  }
+
+  private applyRemote(s: MatchSnapshot) {
+    this.applying = true;
+    clearTimeout(this.timer);
+    this.players.set(s.players);
+    this.current.set(s.current);
+    this.dice.set(s.dice);
+    this.log.set(s.log ?? []);
+    this.rolling.set(false);
+    this.view.set('board');
+    this.applying = false;
+    this.save();
+  }
+
+  // ---- shop ----
+  /** A freshly placed room item, scattered at a random spot with a slight tilt. */
+  private newRoomItem(key: string): RoomItem {
+    return {
+      id: 'it' + Date.now() + Math.floor(Math.random() * 999),
+      key,
+      x: 140 + Math.random() * 360,
+      y: 150 + Math.random() * 200,
+      rot: Math.round(Math.random() * 16 - 8),
+    };
+  }
+
+  buy(key: string) {
+    const it = ITEMS[key];
+    const p = this.cur();
+    const price = p.coupons.length
+      ? Math.max(1, Math.round(it.price * (1 - p.coupons[0] / 100)))
+      : it.price;
+    if (p.leaves < price) return this.toast('not enough leaves for that.');
+
+    let used = false;
+    this.patchCurrent((pl) => {
+      const coupons = [...pl.coupons];
+      if (coupons.length) {
+        coupons.shift();
+        used = true;
+      }
+      const room = [...pl.room, this.newRoomItem(key)];
+      return { ...pl, leaves: pl.leaves - price, coupons, room };
+    });
+    this.toast('bought ' + it.name + (used ? ' (coupon used!)' : '') + ' — it’s in the room.');
+    this.endTurn();
+  }
+
+  leaveShop() {
+    this.toast('left empty-handed.');
+    this.endTurn();
+  }
+
+  // ---- coupon mini-game ----
+  cut() {
+    if (this.view() !== 'coupon' || this.couponDone() || this.cutStep() >= 4) return;
+    const ns = this.cutStep() + 1;
+    this.cutStep.set(ns);
+    if (ns >= 4) this.timer = setTimeout(() => this.couponDone.set(true), 280);
+  }
+
+  collectCoupon() {
+    const v = this.couponVal();
+    this.patchCurrent((p) => ({ ...p, coupons: [...p.coupons, v] }));
+    this.toast('snipped a ' + v + '% coupon!');
+    this.endTurn();
+  }
+
+  // ---- room ----
+  openRoom(idx: number) {
+    this.roomOwner.set(idx);
+    this.view.set('room');
+  }
+
+  closeRoom() {
+    this.view.set('board');
+  }
+
+  moveItem(id: string, x: number, y: number) {
+    this.players.update((list) =>
+      list.map((p, i) =>
+        i !== this.roomOwner() ? p : { ...p, room: p.room.map((r) => (r.id === id ? { ...r, x, y } : r)) },
+      ),
+    );
+  }
+}

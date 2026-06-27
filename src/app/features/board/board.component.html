@@ -1,0 +1,48 @@
+<div class="board">
+  @for (sq of game.board(); track sq.i) {
+    @let toks = tokensOn(sq.i);
+    <div [style.grid-row]="sq.gr" [style.grid-column]="sq.gc">
+      <div
+        class="card"
+        [class.corner]="sq.corner"
+        [class.coupon]="sq.kind === 'coupon'"
+        [class.active]="game.cur().pos === sq.i"
+        [style.--accent]="sq.accent"
+      >
+        @if (sq.kind === 'shop') {
+          <div class="stripe"></div>
+        }
+        @if (sq.kind === 'coupon') {
+          <svg class="snips" viewBox="0 0 24 28" aria-hidden="true" focusable="false">
+            <path class="blade" d="M7.4 22.6 L15.4 4.2" />
+            <path class="blade" d="M16.6 22.6 L8.6 4.2" />
+            <circle class="pivot" cx="12" cy="14" r="1.2" />
+            <circle class="loop loop-a" cx="7.2" cy="23.2" r="3" />
+            <circle class="loop loop-b" cx="16.8" cy="23.2" r="3" />
+          </svg>
+        }
+        @if (sq.icon) {
+          <div class="icon"><app-item-icon [key]="sq.icon" /></div>
+        }
+        <div class="label">{{ sq.label }}</div>
+        <div class="sub">{{ sq.sub }}</div>
+        @for (p of toks; track p.name; let idx = $index) {
+          <div
+            class="token"
+            [style.background]="p.color"
+            [style.left.%]="toks.length > 1 ? 33 + idx * 34 : 50"
+          >
+            {{ p.init }}
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="masthead">
+    <div class="kicker">Vol. I · Two Cents · Hot-Seat Edition</div>
+    <h1>The Re<span class="green">Leaf</span></h1>
+    <div class="tagline">All the news that's fit to spend</div>
+    <div class="cta">roll · shop · snip · decorate</div>
+  </div>
+</div>

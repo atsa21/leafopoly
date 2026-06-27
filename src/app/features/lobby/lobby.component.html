@@ -1,0 +1,28 @@
+<div class="lobby">
+  @if (!mp.available) {
+    <p class="note">Online play is off — add your Firebase config to enable it.</p>
+  } @else if (!mp.online()) {
+    <button class="go" type="button" (click)="host()">▸ Play online with a friend</button>
+    <p class="note">Hosts a private match and gives you a link to share.</p>
+  } @else {
+    <div class="status" [class.live]="mp.peerJoined() || mp.status() === 'connected'">
+      {{ statusText() }}
+    </div>
+    <div class="me">
+      You are <strong [style.color]="game.cur().color">{{ myName() }}</strong>
+      @if (!game.isMyTurn()) {
+        <span> · waiting for {{ game.cur().name }}…</span>
+      }
+    </div>
+
+    @if (mp.mySlot() === 0 && link()) {
+      <label class="share">
+        <span>Invite link</span>
+        <input type="text" [value]="link()" readonly (focus)="$any($event.target).select()" />
+      </label>
+      <button class="copy" type="button" (click)="copy()">
+        {{ copied() ? 'Copied ✓' : 'Copy link' }}
+      </button>
+    }
+  }
+</div>

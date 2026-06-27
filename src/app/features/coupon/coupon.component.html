@@ -1,0 +1,44 @@
+<div class="backdrop">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="coupon-title">
+    <header>
+      <div class="kicker">The Bargain Desk</div>
+      <h2 id="coupon-title">Snip a Coupon</h2>
+    </header>
+    <p class="howto">
+      Click to cut along the dotted line — four snips, going around. ({{ game.cutStep() }}/4)
+    </p>
+
+    <button
+      class="wrap"
+      type="button"
+      [disabled]="game.couponDone()"
+      [attr.aria-label]="'Snip the coupon, ' + game.cutStep() + ' of 4 cuts made'"
+      (click)="snip()"
+    >
+      <span class="clip">
+        <span class="ticket" [class.done]="game.couponDone()">
+          <span class="masthead">Manufacturer Coupon · The Leaf Market</span>
+          <span class="save">Save</span>
+          <span class="pct">{{ game.couponVal() }}<span class="sym">%</span></span>
+          <span class="off">off your next thing you carry home</span>
+          <span class="barcode" aria-hidden="true"></span>
+        </span>
+      </span>
+      <i class="edge top" [class.cut]="game.cutStep() > 0"></i>
+      <i class="edge right" [class.cut]="game.cutStep() > 1"></i>
+      <i class="edge bottom" [class.cut]="game.cutStep() > 2"></i>
+      <i class="edge left" [class.cut]="game.cutStep() > 3"></i>
+      <span class="scissors" [style.left.px]="corner()[0]" [style.top.px]="corner()[1]">✂</span>
+    </button>
+
+    <div class="foot">
+      @if (game.couponDone()) {
+        <button class="take" type="button" (click)="game.collectCoupon()">
+          Tuck it in my pocket →
+        </button>
+      } @else {
+        <p>Keep snipping… move those scissors around the corner.</p>
+      }
+    </div>
+  </div>
+</div>

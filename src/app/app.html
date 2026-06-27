@@ -1,0 +1,59 @@
+<div class="fit">
+<div class="stage" [style.transform]="'scale(' + scale() + ')'">
+  <div class="bg" [style.background]="bg()"></div>
+
+  <div class="layout">
+    <app-board />
+
+    <aside class="right">
+      @for (p of game.players(); track p.name; let i = $index) {
+        <div class="pcard" [class.active]="i === game.current()" [style.border-color]="p.color">
+          <div class="phead">
+            <span class="ptoken" [style.background]="p.color">{{ p.init }}</span>
+            <span class="pname" [style.color]="p.color">{{ p.name }}</span>
+            <button type="button" (click)="game.openRoom(i)">My Room</button>
+          </div>
+          <div class="pleaves">{{ p.leaves }} <small>leaves</small></div>
+          <div class="pmeta">{{ p.coupons.length }} coupon(s) · {{ p.room.length }} item(s)</div>
+        </div>
+      }
+
+      <app-controls />
+
+      <app-lobby />
+
+      <div class="crier">
+        <h3>Town Crier</h3>
+        @for (line of game.log(); track $index) {
+          <div>› {{ line }}</div>
+        }
+        @if (!game.log().length) {
+          <p>Roll the dice to start the story…</p>
+        }
+      </div>
+    </aside>
+  </div>
+
+  <div class="topbar">
+    <button class="new" type="button" (click)="game.openSettings()">⚙ Settings</button>
+    <button class="new" type="button" (click)="game.newGame()">↺ New Game</button>
+  </div>
+
+  @if (game.view() === 'shop') {
+    <app-shop />
+  }
+  @if (game.view() === 'settings') {
+    <app-settings />
+  }
+  @if (game.view() === 'coupon') {
+    <app-coupon />
+  }
+  @if (game.view() === 'room') {
+    <app-room />
+  }
+
+  @if (game.toastMsg()) {
+    <div class="toast" role="status" aria-live="polite">{{ game.toastMsg() }}</div>
+  }
+</div>
+</div>

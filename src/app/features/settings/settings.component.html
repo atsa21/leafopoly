@@ -1,0 +1,52 @@
+<div class="backdrop" (click)="close()">
+  <div
+    class="sheet"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="settings-title"
+    (click)="$event.stopPropagation()"
+  >
+    <header>
+      <div>
+        <div class="kicker">Edition Settings — set your terms</div>
+        <h2 id="settings-title">House Rules</h2>
+      </div>
+      <button class="x" type="button" aria-label="Close settings" (click)="close()">✕</button>
+    </header>
+
+    <div class="fields">
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" autocomplete="off" [formField]="f.name" />
+      </label>
+
+      <label class="field">
+        <span>Starting leaves</span>
+        <input type="number" step="1" [formField]="f.startingLeaves" />
+        @if (f.startingLeaves().invalid()) {
+          <em class="err">Use 0 or more.</em>
+        }
+        <em class="hint">Applies when you start a new game.</em>
+      </label>
+
+      <label class="field">
+        <span>Pass-GO bonus</span>
+        <input type="number" step="1" [formField]="f.passGoBonus" />
+        @if (f.passGoBonus().invalid()) {
+          <em class="err">Use 0 or more.</em>
+        }
+        <em class="hint">Leaves collected each time you pass START.</em>
+      </label>
+    </div>
+
+    <footer>
+      <button class="ghost" type="button" (click)="close()">Cancel</button>
+      <div class="actions">
+        <button type="button" [disabled]="!f().valid()" (click)="save()">Save</button>
+        <button class="primary" type="button" [disabled]="!f().valid()" (click)="saveAndRestart()">
+          Save &amp; new game
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

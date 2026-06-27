@@ -1,0 +1,39 @@
+<div class="backdrop">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shop-name">
+    <header>
+      <div>
+        <div class="kicker">Today's Circular — cut here ✂</div>
+        <div id="shop-name" class="shop-name" [style.color]="shop().accent">{{ shop().name }}</div>
+      </div>
+      <div class="purse">{{ game.cur().leaves }} <small>leaves</small></div>
+    </header>
+
+    <div class="grid">
+      @for (it of items(); track it.key) {
+        <div class="clip">
+          <div class="art">
+            <div class="art-scale" [style.width.px]="58 * it.size" [style.height.px]="58 * it.size">
+              <app-item-icon [key]="it.key" />
+            </div>
+          </div>
+          <div class="name">{{ it.name }}</div>
+          <div class="tag">{{ it.tag }}</div>
+          <div class="price">
+            @if (it.disc) {
+              <s>{{ it.price }}</s>
+            }
+            <b>{{ it.disp }}</b>
+          </div>
+          <button type="button" [disabled]="!it.afford" (click)="game.buy(it.key)">
+            {{ it.afford ? 'Cut it out' : 'too dear' }}
+          </button>
+        </div>
+      }
+    </div>
+
+    <footer>
+      <span>Buy one thing per visit — then it's the next player's turn.</span>
+      <button type="button" (click)="game.leaveShop()">Leave empty-handed →</button>
+    </footer>
+  </div>
+</div>

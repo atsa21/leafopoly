@@ -1,0 +1,87 @@
+:root {
+  --font-body: 'Newsreader', serif;
+  --font-script: 'Kalam', cursive;
+  --font-type: 'Special Elite', monospace;
+  --font-display: 'Pirata One', system-ui; 
+
+  /* --- Surfaces (parchment stack) -------------------------- */
+  --paper: #f3ecda;
+  --paper-raised: #efe2c4;
+  --paper-bright: #fbf8ee;
+  --paper-ticket: #fbf3d6;
+
+  /* --- Ink (text) ------------------------------------------ */
+  --ink: #2a241d;
+  --ink-soft: #4a4234;
+  --ink-muted: #6b5f49;
+  --ink-faint: #9a8f78;
+  --ink-inverse: #f3ecda;
+
+  /* --- Brand accents --------------------------------------- */
+  --leaf: #5d7d39;
+  --berry: #9a4036;
+  --stamp: #b0473b;
+  --gold: #c79b3a;
+
+  /* --- Hairlines & borders --------------------------------- */
+  --line: #d8cdb0;
+  --line-strong: #cdbf9d;
+  --line-dashed: #b8a874;
+  --ring-light: #f7f1e3;
+
+  /* --- Radii ----------------------------------------------- */
+  --r-xs: 4px;
+  --r-sm: 5px;
+  --r-md: 9px;
+  --r-lg: 13px;
+  --r-pill: 30px;
+
+  /* --- Elevation (warm, paper-on-table shadows) ------------ */
+  --sh-sm: 0 2px 5px rgba(40, 25, 10, 0.22);
+  --sh-md: 0 3px 9px rgba(40, 25, 10, 0.2);
+  --sh-lg: 0 4px 16px rgba(40, 25, 10, 0.28);
+  --sh-modal: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --press: 0 5px 0 rgba(0, 0, 0, 0.28);
+  --scrim: rgba(20, 12, 4, 0.55);
+
+  /* --- Spacing rhythm (matches the board's cozy cadence) --- */
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 9px;
+  --space-4: 13px;
+  --space-5: 18px;
+  --space-6: 22px;
+
+  /* --- Focus (accessibility) ------------------------------- */
+  --focus-ring: 0 0 0 3px rgba(154, 64, 54, 0.9);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: #444444;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--r-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

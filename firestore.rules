@@ -1,0 +1,13 @@
+rules_version='2'
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pet-project scope: a match doc is reachable only by its random 6-char id,
+    // so the invite link effectively acts as the password. Anyone who has the
+    // link can read/write that one match; nothing else in the database is
+    // exposed. No expiry — online play keeps working.
+    match /matches/{id} {
+      allow read, write: if true;
+    }
+  }
+}
