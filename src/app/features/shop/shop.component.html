@@ -2,10 +2,14 @@
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shop-name">
     <header>
       <div>
-        <div class="kicker">Today's Circular — cut here ✂</div>
+        <div class="kicker">Today's Circular</div>
         <div id="shop-name" class="shop-name" [style.color]="shop().accent">{{ shop().name }}</div>
       </div>
-      <div class="purse">{{ game.cur().leaves }} <small>leaves</small></div>
+
+      <div class="right">
+        <button class="close" type="button" aria-label="Close" (click)="game.leaveShop()">✕</button>
+        <div class="purse">{{ game.cur().leaves }} <small>leaves</small></div>
+      </div>
     </header>
 
     <div class="grid">

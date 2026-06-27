@@ -60,6 +60,11 @@ export class App {
     return g && g.slot === slot ? [g] : [];
   }
 
+  protected leafLossBurst(slot: number) {
+    const g = this.game.leafLoss();
+    return g && g.slot === slot ? [g] : [];
+  }
+
   bg = computed(() => {
     const base = { cork: '#9c7d52', slate: '#5d6673', olive: '#6d7144' }[this.game.tableColor()];
     return `radial-gradient(1200px 500px at 50% -10%, rgba(255,245,220,.10), transparent 60%),

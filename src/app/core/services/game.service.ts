@@ -37,6 +37,7 @@ export class GameService {
   toastMsg = signal('');
   log = signal<string[]>([]);
   leafGain = signal<{ slot: number; amount: number; id: number } | null>(null);
+  leafLoss = signal<{ slot: number; amount: number; id: number } | null>(null);
 
   activeShop = signal<EShopCategory | null>(null);
   cutStep = signal(0);
@@ -48,6 +49,8 @@ export class GameService {
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private leafTimer: ReturnType<typeof setTimeout> | undefined;
   private leafGainId = 0;
+  private leafLossTimer: ReturnType<typeof setTimeout> | undefined;
+  private leafLossId = 0;
 
   private savedMode: 'solo' | 'multi' | null = null;
   private savedMatchId: string | null = null;
@@ -321,6 +324,14 @@ export class GameService {
     this.leafTimer = setTimeout(() => this.leafGain.set(null), 1400);
   }
 
+  private loseLeaves(slot: number, amount: number) {
+    if (amount <= 0) return;
+    this.sound.wind();
+    this.leafLoss.set({ slot, amount, id: ++this.leafLossId });
+    clearTimeout(this.leafLossTimer);
+    this.leafLossTimer = setTimeout(() => this.leafLoss.set(null), 1400);
+  }
+
   private toast(msg: string) {
     clearTimeout(this.toastTimer);
     const name = this.cur().name;
@@ -437,6 +448,7 @@ export class GameService {
           skip: sq.skip ? true : p.skip,
         }));
       if (d > 0) this.gainLeaves(this.current(), d);
+      else if (d < 0) this.loseLeaves(this.current(), -d);
       this.toast(sq.msg || 'a quiet square.');
       this.endTurn();
     }

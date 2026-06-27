@@ -35,6 +35,14 @@
                 <span class="lb-leaf l3"><app-item-icon key="leaf" /></span>
               </span>
             }
+            @for (g of leafLossBurst(i); track g.id) {
+              <span class="leaf-burst loss" aria-hidden="true">
+                <span class="lb-num">-{{ g.amount }}</span>
+                <span class="lb-leaf l1"><app-item-icon key="leaf" /></span>
+                <span class="lb-leaf l2"><app-item-icon key="leaf" /></span>
+                <span class="lb-leaf l3"><app-item-icon key="leaf" /></span>
+              </span>
+            }
           </div>
           <div class="pmeta">{{ p.coupons.length }} coupon(s) in hand · {{ p.room.length }} item(s) collected</div>
         </div>

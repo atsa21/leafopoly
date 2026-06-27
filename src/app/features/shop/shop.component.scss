@@ -24,6 +24,27 @@ header {
   align-items: flex-start;
   border-bottom: 2px solid var(--ink);
   padding-bottom: var(--space-3);
+
+  .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .close {
+      font-family: var(--font-type);
+      font-size: 16px;
+      line-height: 1;
+      color: var(--ink-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-1);
+
+      &:hover {
+        color: var(--ink);
+      }
+    }
+  }
 }
 
 .kicker {

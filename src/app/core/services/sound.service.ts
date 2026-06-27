@@ -127,6 +127,40 @@ export class SoundService {
     });
   }
 
+  wind(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 0.7;
+
+    const frames = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    data.forEach((_, i) => {
+      const p = i / frames;
+      data[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * p);
+    });
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(420, t);
+    lp.frequency.linearRampToValueAtTime(1300, t + dur * 0.5);
+    lp.frequency.linearRampToValueAtTime(380, t + dur);
+    lp.Q.value = 4;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.16, t + dur * 0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    src.connect(lp).connect(g).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur);
+  }
+
   pickUp(): void {
     const ctx = this.audio();
     if (!ctx) return;
