@@ -4,7 +4,13 @@
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  gap: 1.5px;
+  background: var(--ink);
+  border: 7px solid var(--ink);
+  border-radius: 7px;
+  box-shadow:
+    0 10px 30px rgba(23, 16, 9, 0.45),
+    inset 0 0 0 2px rgba(120, 90, 50, 0.25);
 }
 
 .card {
@@ -13,19 +19,13 @@
   padding: var(--space-3) var(--space-1) 20px;
   overflow: hidden;
   background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  box-shadow: var(--sh-sm);
 
   &.corner {
     background: var(--paper-raised);
-    border-color: var(--accent);
   }
 
   &.active {
-    box-shadow:
-      0 0 0 3px var(--accent),
-      0 3px 8px rgba(40, 25, 10, 0.3);
+    box-shadow: inset 0 0 0 3px var(--accent);
   }
 }
 
@@ -185,21 +185,18 @@
   }
 }
 
+// flush with the grid — a faint inner hairline matches the tile lines
 .masthead {
   grid-row: 2 / 7;
   grid-column: 2 / 7;
-  margin: var(--space-2);
   padding: var(--space-6);
   text-align: center;
   background: var(--paper);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-xs);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: rotate(-0.5deg);
-  box-shadow: var(--sh-lg);
+  box-shadow: inset 0 0 0 1px rgba(120, 90, 50, 0.18);
 
   .kicker {
     font-family: var(--font-type);

@@ -11,7 +11,7 @@ export class LobbyComponent {
   game = inject(GameService);
   mp = inject(MultiplayerService);
 
-  protected link = signal('');
+  protected link = computed(() => this.game.inviteLink());
   protected copied = signal(false);
 
   protected myName = computed(() => this.game.players()[this.mp.mySlot()]?.name ?? '');
@@ -21,12 +21,6 @@ export class LobbyComponent {
     if (this.mp.mySlot() === 0) return 'Waiting for a friend to join…';
     return 'Connecting…';
   });
-
-  async host(): Promise<void> {
-    const id = await this.game.hostMatch();
-    const { origin, pathname } = window.location;
-    this.link.set(`${origin}${pathname}?m=${id}`);
-  }
 
   async copy(): Promise<void> {
     try {

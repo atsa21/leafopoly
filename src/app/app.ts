@@ -7,9 +7,8 @@ import { CouponComponent } from './features/coupon/coupon.component';
 import { RoomComponent } from './features/room/room.component';
 import { LobbyComponent } from './features/lobby/lobby.component';
 import { SettingsComponent } from './features/settings/settings.component';
+import { StartComponent } from './features/start/start.component';
 
-// The game is authored at a fixed canvas size, then scaled to fit the
-// viewport so the board, sidebar, and type stay perfectly proportional.
 const STAGE_W = 1280;
 const STAGE_H = 820;
 
@@ -23,6 +22,7 @@ const STAGE_H = 820;
     RoomComponent,
     LobbyComponent,
     SettingsComponent,
+    StartComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -37,9 +37,10 @@ export class App {
   constructor() {
     afterNextRender(() => {
       this.measure();
-      // Opened via an invite link? Join that match (browser-only).
       const id = new URLSearchParams(window.location.search).get('m');
-      if (id && this.game.online() === false) this.game.joinMatch(id);
+      if (id && this.game.online() === false) {
+        this.game.joinRoom(id);
+      }
     });
   }
 

@@ -14,18 +14,20 @@ const PLAYER_COLORS = ['#b0473b', '#36617e'];
 export class GameService {
   private mp = inject(MultiplayerService);
   private sound = inject(SoundService);
-  /** Guard so applying a remote snapshot doesn't echo back out as a push. */
   private applying = false;
-  // ---- tunables (settings) ----
+
   startingLeaves = signal(50);
   passGoBonus = signal(10);
   playerNames = signal<string[]>([...DEFAULT_NAMES]);
   tableColor = signal<TableColor>('slate');
 
-  // Rebuilds whenever the pass-go bonus changes so the START label stays in sync.
   board = computed(() => buildBoard(this.passGoBonus()));
 
-  // ---- state signals ----
+  started = signal(false);
+  mode = signal<'solo' | 'multi' | null>(null);
+  inviteLink = signal('');
+  hasSave = signal(false);
+
   players = signal<Player[]>([]);
   current = signal(0);
   view = signal<View>('board');
@@ -45,25 +47,24 @@ export class GameService {
 
   constructor() {
     this.players.set(this.freshPlayers());
-    // Mirror the other player's moves into local state when online.
     this.mp.onRemote = (s) => this.applyRemote(s);
     this.mp.onAnim = (a) => this.playWatch(a);
-    // localStorage is browser-only; load saved state after hydration to
-    // avoid an SSR/client markup mismatch.
+
     afterNextRender(() => {
       this.loadSettings();
       const saved = this.load();
-      if (saved) this.players.set(saved);
-      else this.players.set(this.freshPlayers());
+      if (saved) {
+        this.players.set(saved);
+        this.hasSave.set(true);
+      } else {
+        this.players.set(this.freshPlayers());
+      }
     });
   }
 
-  // ---- derived ----
   cur = computed(() => this.players()[this.current()]);
-  /** Offline: always your turn. Online: only when the active slot is yours. */
   isMyTurn = computed(() => !this.mp.online() || this.current() === this.mp.mySlot());
   online = computed(() => this.mp.online());
-  /** The slot you control (0 offline / when hosting, 1 when you joined). */
   mySlot = computed(() => this.mp.mySlot());
   dicePips = computed(() => {
     const m: Record<number, number[]> = {
@@ -78,9 +79,58 @@ export class GameService {
     return Array.from({ length: 9 }, (_, i) => set.has(i));
   });
 
-  // ---- setup / persistence ----
-  private freshPlayers(): Player[] {
-    return this.playerNames().map((name, i) => ({
+  private soloName(): string {
+    return this.playerNames()[0]?.trim() || DEFAULT_NAMES[0];
+  }
+
+  private beginFresh(names: string[]): void {
+    clearTimeout(this.timer);
+    clearTimeout(this.toastTimer);
+    this.players.set(this.freshPlayers(names));
+    this.current.set(0);
+    this.view.set('board');
+    this.dice.set(1);
+    this.rolling.set(false);
+    this.toastMsg.set('');
+    this.log.set([]);
+  }
+
+  startSolo(): void {
+    this.mp.leave();
+    this.inviteLink.set('');
+    this.mode.set('solo');
+    this.beginFresh([this.soloName()]);
+    this.save();
+    this.started.set(true);
+  }
+
+  async createRoom(): Promise<string> {
+    this.mode.set('multi');
+    this.beginFresh(this.playerNames());
+    const id = await this.hostMatch();
+    const { origin, pathname } = window.location;
+    this.inviteLink.set(`${origin}${pathname}?m=${id}`);
+    return id;
+  }
+
+  joinRoom(id: string): void {
+    this.mode.set('multi');
+    this.beginFresh(this.playerNames());
+    this.joinMatch(id);
+    this.started.set(true);
+  }
+
+  enterGame(): void {
+    this.started.set(true);
+  }
+
+  resume(): void {
+    this.mode.set('solo');
+    this.started.set(true);
+  }
+
+  private freshPlayers(names: string[] = this.playerNames()): Player[] {
+    return names.map((name, i) => ({
       name,
       color: PLAYER_COLORS[i] ?? '#5d7d39',
       init: (name.trim()[0] ?? '?').toUpperCase(),
@@ -211,20 +261,11 @@ export class GameService {
   }
 
   newGame() {
-    clearTimeout(this.timer);
-    clearTimeout(this.toastTimer);
     try {
       localStorage.removeItem(SAVE_KEY);
-    } catch {
-      /* ignore */
-    }
-    this.players.set(this.freshPlayers());
-    this.current.set(0);
-    this.view.set('board');
-    this.dice.set(1);
-    this.rolling.set(false);
-    this.toastMsg.set('');
-    this.log.set([]);
+    } catch {}
+    this.hasSave.set(false);
+    this.beginFresh(this.mode() === 'solo' ? [this.soloName()] : this.playerNames());
     this.sync();
   }
 

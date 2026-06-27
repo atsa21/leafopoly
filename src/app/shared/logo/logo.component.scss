@@ -1,0 +1,50 @@
+:host {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  font-family: var(--font-display);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.re {
+  position: relative;
+  color: var(--ink);
+}
+
+.crown {
+  position: absolute;
+  left: 20%;
+  bottom: 102%;
+  width: 0.4em;
+  height: auto;
+  overflow: visible;
+  transform: translate(-50%, 38%) rotate(-7deg);
+  filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.08));
+}
+
+.crown-body {
+  fill: var(--gold);
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.leafe {
+  color: var(--leaf);
+}

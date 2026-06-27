@@ -1,0 +1,91 @@
+<div class="start">
+  <div class="card" role="dialog" aria-labelledby="start-title">
+    <div class="brand">
+      <div class="kicker">A cozy board game</div>
+      <h1 id="start-title" class="logo">The <app-logo /></h1>
+      <p class="tag">Wander the market, gather leaves, furnish your little room.</p>
+    </div>
+
+    @if (panel() === 'choose') {
+      <div class="choices">
+        <button class="choice" type="button" (click)="solo()">
+          <span class="ic" aria-hidden="true">🌿</span>
+          <span class="ct">
+            <strong>Play solo</strong>
+            <small>A quiet round on your own.</small>
+          </span>
+        </button>
+
+        <button class="choice" type="button" (click)="friends()" [disabled]="!mp.available">
+          <span class="ic" aria-hidden="true">👥</span>
+          <span class="ct">
+            <strong>Multiple players</strong>
+            <small>
+              {{ mp.available ? 'Create a room and invite a friend.' : 'Add Firebase config to enable.' }}
+            </small>
+          </span>
+        </button>
+      </div>
+
+      @if (game.hasSave()) {
+        <button class="resume" type="button" (click)="resume()">↩ Continue last game</button>
+      }
+    } @else {
+      <div class="friends">
+        <section class="block">
+          <h2>Create a room</h2>
+          @if (!roomId()) {
+            <button class="primary" type="button" (click)="createRoom()" [disabled]="creating()">
+              {{ creating() ? 'Creating…' : 'Create a room' }}
+            </button>
+            <p class="note">You’ll get a room code and a link to share.</p>
+          } @else {
+            <div class="code-field">
+              <span>Room code</span>
+              <div class="code">{{ roomId() }}</div>
+            </div>
+            <label class="share">
+              <span>Invite link</span>
+              <input
+                type="text"
+                readonly
+                [value]="link()"
+                (focus)="$any($event.target).select()"
+              />
+            </label>
+            <div class="row">
+              <button class="copy" type="button" (click)="copy()">
+                {{ copied() ? 'Copied ✓' : 'Copy link' }}
+              </button>
+              <button class="primary" type="button" (click)="enter()">Start game ▸</button>
+            </div>
+            <p class="note">Your friend opens the link, or enters the code below, to join.</p>
+          }
+        </section>
+
+        <div class="or"><span>or</span></div>
+
+        <section class="block">
+          <h2>Join a room</h2>
+          <label class="field">
+            <span>Room code</span>
+            <input
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="e.g. k7m2p9"
+              [value]="joinId()"
+              (input)="joinId.set($any($event.target).value)"
+              (keydown.enter)="canJoin() && join()"
+            />
+          </label>
+          <button class="primary" type="button" [disabled]="!canJoin()" (click)="join()">
+            Join &amp; play ▸
+          </button>
+        </section>
+
+        <button class="back" type="button" (click)="back()">← Back</button>
+      </div>
+    }
+  </div>
+</div>

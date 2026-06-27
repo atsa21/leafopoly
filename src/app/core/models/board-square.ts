@@ -8,7 +8,7 @@ export interface BoardSquare {
   kind: SquareKind;
   shop?: string;
   category?: ShopCategory | LeafCategory | RestCategory;
-  icon?: string; // item-icon key shown on the square
+  icon?: string;
   delta?: number;
   skip?: boolean;
   msg?: string;
@@ -16,6 +16,6 @@ export interface BoardSquare {
   sub: string;
   accent: string;
   corner: boolean;
-  gr: number; // grid row (1..7)
-  gc: number; // grid column (1..7)
+  gr: number;
+  gc: number;
 }

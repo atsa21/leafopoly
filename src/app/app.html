@@ -2,6 +2,9 @@
 <div class="stage" [style.transform]="'scale(' + scale() + ')'">
   <div class="bg" [style.background]="bg()"></div>
 
+  @if (!game.started()) {
+    <app-start />
+  } @else {
   <div class="layout">
     <app-board />
 
@@ -20,7 +23,9 @@
 
       <app-controls />
 
-      <app-lobby />
+      @if (game.online()) {
+        <app-lobby />
+      }
 
       <div class="crier">
         <h3>Town Crier</h3>
@@ -54,6 +59,7 @@
 
   @if (game.toastMsg()) {
     <div class="toast" role="status" aria-live="polite">{{ game.toastMsg() }}</div>
+  }
   }
 </div>
 </div>
