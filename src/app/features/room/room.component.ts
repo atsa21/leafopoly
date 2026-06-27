@@ -8,6 +8,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { GameService } from '@core/services/game.service';
+import { SoundService } from '@core/services/sound.service';
 import { ItemIconComponent } from '@shared/icons/item-icon.component';
 import { ITEMS } from '@core/constants';
 
@@ -21,6 +22,7 @@ import { Player } from '@core/models';
 })
 export class RoomComponent {
   game = inject(GameService);
+  private sound = inject(SoundService);
   private destroyRef = inject(DestroyRef);
   surface = viewChild<ElementRef<HTMLDivElement>>('surface');
   owner = (): Player => this.game.players()[this.game.roomOwner()];
@@ -104,6 +106,13 @@ export class RoomComponent {
     };
     this.game.bringToFront(id);
     el.setPointerCapture(e.pointerId);
+    this.playPickup(item.key);
+  }
+
+  private playPickup(key: string): void {
+    if (key === 'cat') this.sound.meow();
+    else if (key === 'dog') this.sound.woof();
+    else this.sound.pickUp();
   }
 
   onMove(e: PointerEvent) {

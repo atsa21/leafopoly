@@ -57,7 +57,7 @@ export const SHOPS: Record<EShopCategory, ShopDef> = {
     accent: '#5d7d39',
     category: EShopCategory.Other,
     items: [
-      { key: 'juice', name: 'Apple Juice', tag: 'cold, 1 bottle', price: 5, size: 0.8 },
+      { key: 'juice', name: 'Apple Juice', tag: 'cold, 1 bottle', price: 5, size: 1 },
       { key: 'clock', name: 'Table Clock', tag: 'tick tock', price: 4, size: 0.85 },
       { key: 'books', name: 'Books', tag: 'a good read', price: 3, size: 0.8 },
       { key: 'mug', name: 'Cocoa Mug', tag: 'no chips!', price: 3, size: 0.75 },

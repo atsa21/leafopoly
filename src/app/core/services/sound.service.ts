@@ -49,6 +49,95 @@ export class SoundService {
     src.stop(t + dur);
   }
 
+  pickUp(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(420, t);
+    osc.frequency.exponentialRampToValueAtTime(760, t + 0.08);
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.16, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.13);
+  }
+
+  meow(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 0.5;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    // "me-ow" pitch arc: rise then fall
+    osc.frequency.setValueAtTime(500, t);
+    osc.frequency.linearRampToValueAtTime(780, t + 0.16);
+    osc.frequency.linearRampToValueAtTime(430, t + dur);
+
+    // gentle vibrato for a cat-like warble
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = 22;
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.value = 18;
+    lfo.connect(lfoGain).connect(osc.frequency);
+
+    // formant sweep "ee" -> "ow"
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.Q.value = 5;
+    bp.frequency.setValueAtTime(1900, t);
+    bp.frequency.linearRampToValueAtTime(900, t + dur);
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.05);
+    g.gain.setValueAtTime(0.22, t + dur - 0.12);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    osc.connect(bp).connect(g).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur);
+    lfo.start(t);
+    lfo.stop(t + dur);
+  }
+
+  woof(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 0.18;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(280, t);
+    osc.frequency.exponentialRampToValueAtTime(150, t + 0.05);
+    osc.frequency.exponentialRampToValueAtTime(90, t + dur);
+
+    // formant sweep "w" -> "oof"
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.Q.value = 2.5;
+    bp.frequency.setValueAtTime(900, t);
+    bp.frequency.linearRampToValueAtTime(500, t + dur);
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.35, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    osc.connect(bp).connect(g).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur);
+  }
+
   dice(): void {
     const ctx = this.audio();
     if (!ctx) return;
