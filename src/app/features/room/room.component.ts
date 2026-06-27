@@ -88,6 +88,7 @@ export class RoomComponent {
   private drag: { id: string; dx: number; dy: number } | null = null;
 
   onDown(e: PointerEvent, id: string) {
+    if (!this.game.canEditRoom()) return;
     e.preventDefault();
     const el = this.surface()!.nativeElement;
     const item = this.owner().room.find((r) => r.id === id)!;

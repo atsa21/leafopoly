@@ -13,7 +13,6 @@ export class StartComponent {
   protected game = inject(GameService);
   protected mp = inject(MultiplayerService);
 
-  /** 'choose' is the front menu; 'friends' reveals the room controls. */
   protected panel = signal<'choose' | 'friends'>('choose');
   protected joinId = signal('');
   protected creating = signal(false);
@@ -63,8 +62,6 @@ export class StartComponent {
       await navigator.clipboard.writeText(this.link());
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 1800);
-    } catch {
-      /* clipboard unavailable — the link is still selectable */
-    }
+    } catch {}
   }
 }

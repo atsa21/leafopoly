@@ -16,6 +16,7 @@
         <div
           class="thing"
           [class.lamp]="r.key === 'lamp'"
+          [class.locked]="!game.canEditRoom()"
           [style.left.px]="r.x * scale()"
           [style.top.px]="r.y * scale()"
           [style.width.px]="size(r.key) * scale()"
@@ -60,6 +61,10 @@
         </div>
       }
     </div>
-    <p class="hint">Drag your things anywhere on the walls or floor to arrange them.</p>
+    @if (game.canEditRoom()) {
+      <p class="hint">Drag your things anywhere on the walls or floor to arrange them.</p>
+    } @else {
+      <p class="hint">You can look around {{ owner().name }}'s room, but only they can rearrange it.</p>
+    }
   </div>
 </div>

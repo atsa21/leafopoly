@@ -1,7 +1,7 @@
 import { Service, signal, computed, inject, afterNextRender } from '@angular/core';
 import { Player, View, TableColor, RoomItem } from '../models';
 import { EShopCategory } from '../enums';
-import { ITEMS, LUCKY_ITEMS, buildBoard } from '../constants';
+import { ITEMS, LUCKY_ITEMS, ITEM_CATEGORY, CATEGORY_GOAL, buildBoard } from '../constants';
 import { MatchSnapshot, MultiplayerService, RollAnim } from './multiplayer.service';
 import { SoundService } from './sound.service';
 
@@ -65,6 +65,7 @@ export class GameService {
 
   cur = computed(() => this.players()[this.current()]);
   isMyTurn = computed(() => !this.mp.online() || this.current() === this.mp.mySlot());
+  canEditRoom = computed(() => !this.mp.online() || this.roomOwner() === this.mp.mySlot());
   online = computed(() => this.mp.online());
   mySlot = computed(() => this.mp.mySlot());
   dicePips = computed(() => {
@@ -78,6 +79,33 @@ export class GameService {
     };
     const set = new Set(m[this.dice()] ?? []);
     return Array.from({ length: 9 }, (_, i) => set.has(i));
+  });
+
+  readonly categoryGoal = CATEGORY_GOAL;
+
+  categoryTally(p: Player): Record<EShopCategory, number> {
+    const tally = {
+      [EShopCategory.Furniture]: 0,
+      [EShopCategory.Decor]: 0,
+      [EShopCategory.Room]: 0,
+      [EShopCategory.Pet]: 0,
+      [EShopCategory.Other]: 0,
+    };
+    for (const item of p.room) {
+      const cat = ITEM_CATEGORY[item.key];
+      if (cat) tally[cat]++;
+    }
+    return tally;
+  }
+
+  winner = computed<number | null>(() => {
+    const players = this.players();
+    const cats = Object.values(EShopCategory);
+    for (let i = 0; i < players.length; i++) {
+      const tally = this.categoryTally(players[i]);
+      if (cats.every((c) => tally[c] >= this.categoryGoal)) return i;
+    }
+    return null;
   });
 
   private soloName(): string {
@@ -292,8 +320,10 @@ export class GameService {
     this.toastTimer = setTimeout(() => this.toastMsg.set(''), 2900);
   }
 
-  // ---- the turn loop ----
   roll() {
+    if (this.winner() !== null) {
+      return;
+    }
     if (this.rolling() || this.view() !== 'board' || !this.isMyTurn()) return;
     if (this.cur().skip) {
       this.mp.pushAnim({ n: 0, slot: this.current(), skip: true });

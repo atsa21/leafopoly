@@ -68,6 +68,10 @@
     <app-room />
   }
 
+  @if (game.winner() !== null) {
+    <app-win />
+  }
+
   @if (game.toastMsg()) {
     <div class="toast" role="status" aria-live="polite">{{ game.toastMsg() }}</div>
   }

@@ -95,11 +95,12 @@ header {
   cursor: grab;
   touch-action: none;
   filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.3));
+
+  &.locked {
+    cursor: default;
+  }
 }
 
-// A warm pool of light cast by the reading lamp. Sits behind the icon (z-index
-// -1) and over the floor, with a slow flicker. The radial gradient is alpha
-// only, so it reads as light spilling onto whatever is below.
 .lamp-glow {
   position: absolute;
   left: 50%;
