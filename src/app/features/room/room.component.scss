@@ -95,6 +95,8 @@ header {
   cursor: grab;
   touch-action: none;
   filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.3));
+  transform: translateZ(0);
+  backface-visibility: hidden;
 
   &.locked {
     cursor: default;
