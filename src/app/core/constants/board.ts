@@ -1,31 +1,32 @@
 import { BoardSquare } from '../models';
+import { EShopCategory } from '../enums';
 import { SHOPS } from './shops';
 
 const DEFS: Array<Partial<BoardSquare>> = [
   { kind: 'start' },
-  { kind: 'shop', shop: 'furniture' },
+  { kind: 'shop', shop: EShopCategory.Furniture },
   { kind: 'coupon' },
-  { kind: 'shop', shop: 'decor' },
+  { kind: 'shop', shop: EShopCategory.Decor },
   { kind: 'leaf', delta: 5 },
-  { kind: 'shop', shop: 'room' },
+  { kind: 'shop', shop: EShopCategory.Room },
   { kind: 'rest', category: 'rain' },
-  { kind: 'coupon' },
-  { kind: 'shop', shop: 'other' },
+  { kind: 'shop', shop: EShopCategory.Pet },
+  { kind: 'shop', shop: EShopCategory.Other },
   { kind: 'leaf', delta: -3 },
-  { kind: 'shop', shop: 'furniture' },
+  { kind: 'shop', shop: EShopCategory.Furniture },
   { kind: 'luckyfind' },
   { kind: 'rest', category: 'lemonade' },
-  { kind: 'shop', shop: 'decor' },
+  { kind: 'shop', shop: EShopCategory.Decor },
   { kind: 'leaf', delta: 6 },
-  { kind: 'shop', shop: 'room' },
+  { kind: 'shop', shop: EShopCategory.Room },
   { kind: 'coupon' },
-  { kind: 'shop', shop: 'other' },
+  { kind: 'shop', shop: EShopCategory.Other },
   { kind: 'rest', category: 'rain' },
-  { kind: 'shop', shop: 'furniture' },
+  { kind: 'shop', shop: EShopCategory.Furniture },
   { kind: 'leaf', delta: -4 },
-  { kind: 'shop', shop: 'decor' },
+  { kind: 'shop', shop: EShopCategory.Decor },
   { kind: 'coupon' },
-  { kind: 'shop', shop: 'room' },
+  { kind: 'shop', shop: EShopCategory.Room },
 ];
 
 function gridPos(i: number): { r: number; c: number } {

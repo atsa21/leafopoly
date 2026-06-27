@@ -1,9 +1,9 @@
-import { ShopCategory } from './shop-category';
+import { EShopCategory } from '../enums';
 import { ItemDef } from './item-def';
 
 export interface ShopDef {
   name: string;
   accent: string;
-  category: ShopCategory;
+  category: EShopCategory;
   items: ItemDef[];
 }

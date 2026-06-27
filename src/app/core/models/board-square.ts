@@ -1,13 +1,13 @@
 import { SquareKind } from './square-kind';
-import { ShopCategory } from './shop-category';
+import { EShopCategory } from '../enums';
 import { LeafCategory } from './leaf-category';
 import { RestCategory } from './rest-category';
 
 export interface BoardSquare {
   i: number;
   kind: SquareKind;
-  shop?: string;
-  category?: ShopCategory | LeafCategory | RestCategory;
+  shop?: EShopCategory;
+  category?: EShopCategory | LeafCategory | RestCategory;
   icon?: string;
   delta?: number;
   skip?: boolean;

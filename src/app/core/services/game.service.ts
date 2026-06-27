@@ -1,5 +1,6 @@
 import { Service, signal, computed, inject, afterNextRender } from '@angular/core';
 import { Player, View, TableColor, RoomItem } from '../models';
+import { EShopCategory } from '../enums';
 import { ITEMS, LUCKY_ITEMS, buildBoard } from '../constants';
 import { MatchSnapshot, MultiplayerService, RollAnim } from './multiplayer.service';
 import { SoundService } from './sound.service';
@@ -36,7 +37,7 @@ export class GameService {
   toastMsg = signal('');
   log = signal<string[]>([]);
 
-  activeShop = signal<string | null>(null);
+  activeShop = signal<EShopCategory | null>(null);
   cutStep = signal(0);
   couponVal = signal(0);
   couponDone = signal(false);

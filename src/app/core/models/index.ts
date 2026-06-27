@@ -1,6 +1,5 @@
 export * from './view';
 export * from './square-kind';
-export * from './shop-category';
 export * from './leaf-category';
 export * from './rest-category';
 export * from './table-color';
