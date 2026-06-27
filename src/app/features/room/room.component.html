@@ -15,7 +15,7 @@
       @for (r of owner().room; track r.id) {
         <div
           class="thing"
-          [class.lamp]="r.key === 'lamp'"
+          [class.lamp]="r.key === 'lamp' || r.key === 'ceiling_lamp'"
           [class.locked]="!game.canEditRoom()"
           [style.left.px]="r.x * scale()"
           [style.top.px]="r.y * scale()"
@@ -24,7 +24,7 @@
           [attr.aria-label]="label(r.key)"
           (pointerdown)="onDown($event, r.id)"
         >
-          @if (r.key === 'lamp') {
+          @if (r.key === 'lamp' || r.key === 'ceiling_lamp') {
             <span class="lamp-glow" aria-hidden="true"></span>
           }
 
