@@ -12,6 +12,9 @@
       @for (it of items(); track it.key) {
         <div class="clip">
           <div class="art">
+            @if (it.owned > 0) {
+              <span class="owned" aria-label="Already owned: {{ it.owned }}">×{{ it.owned }}</span>
+            }
             <div class="art-scale" [style.width.px]="58 * it.size" [style.height.px]="58 * it.size">
               <app-item-icon [key]="it.key" [crisp]="true" />
             </div>

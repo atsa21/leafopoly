@@ -72,11 +72,26 @@ header {
 
 .art {
   // fixed row so card text stays aligned; the icon inside scales by item size
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 82px;
+}
+
+.owned {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: var(--font-type);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--paper-bright);
+  background: var(--leaf);
+  border-radius: 999px;
+  padding: 3px 6px;
 }
 
 .name {
