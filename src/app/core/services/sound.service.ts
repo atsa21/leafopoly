@@ -1,10 +1,17 @@
-import { Service } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
 @Service()
 export class SoundService {
   private ctx?: AudioContext;
 
+  readonly muted = signal(false);
+
+  toggleMute(): void {
+    this.muted.update((m) => !m);
+  }
+
   private audio(): AudioContext | undefined {
+    if (this.muted()) return undefined;
     if (typeof window === 'undefined') return undefined;
     const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return undefined;

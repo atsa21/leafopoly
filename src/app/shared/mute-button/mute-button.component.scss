@@ -1,0 +1,27 @@
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-script);
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  padding: var(--space-2);
+  line-height: 0;
+  cursor: pointer;
+  box-shadow: var(--sh-md);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+button:hover {
+  background: var(--paper-ticket);
+}
+
+button:active {
+  transform: translateY(1px);
+  box-shadow: var(--sh-sm);
+}

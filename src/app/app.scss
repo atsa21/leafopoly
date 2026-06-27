@@ -271,6 +271,22 @@
     width: 100%;
   }
 
+  .right app-controls {
+    order: 1;
+  }
+
+  .right .pcard {
+    order: 2;
+  }
+
+  .right app-lobby {
+    order: 3;
+  }
+
+  .right .crier {
+    order: 4;
+  }
+
   .crier {
     flex: none;
     max-height: 240px;

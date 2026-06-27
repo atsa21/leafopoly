@@ -10,6 +10,7 @@ import { SettingsComponent } from './features/settings/settings.component';
 import { StartComponent } from './features/start/start.component';
 import { WinComponent } from './features/win/win.component';
 import { ItemIconComponent } from "./shared/icons/item-icon.component";
+import { MuteButtonComponent } from './shared/mute-button/mute-button.component';
 
 const STAGE_W = 1280;
 const STAGE_H = 820;
@@ -26,7 +27,8 @@ const STAGE_H = 820;
     SettingsComponent,
     StartComponent,
     WinComponent,
-    ItemIconComponent
+    ItemIconComponent,
+    MuteButtonComponent
 ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

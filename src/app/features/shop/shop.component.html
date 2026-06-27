@@ -13,7 +13,7 @@
         <div class="clip">
           <div class="art">
             @if (it.owned > 0) {
-              <span class="owned" aria-label="Already owned: {{ it.owned }}">×{{ it.owned }}</span>
+              <span class="owned" aria-label="Already owned: {{ it.owned }}">× {{ it.owned }}</span>
             }
             <div class="art-scale">
               <app-item-icon [key]="it.key" />
@@ -29,7 +29,7 @@
             <b>{{ it.disp }}</b>
           </div>
           <button type="button" [disabled]="!it.afford" (click)="game.buy(it.key)">
-            {{ it.afford ? 'Cut it out' : 'too dear' }}
+            {{ it.afford ? 'Buy it' : 'too dear' }}
           </button>
         </div>
       }
