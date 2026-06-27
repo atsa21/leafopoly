@@ -131,6 +131,7 @@ export class RoomComponent {
     if (this.drag) {
       this.surface()!.nativeElement.releasePointerCapture(e.pointerId);
       this.drag = null;
+      this.game.commitRoom();
     }
   }
 }

@@ -554,7 +554,11 @@ export class GameService {
     );
   }
 
-  /** Raise a room item above the rest by moving it to the end of the paint order. */
+  commitRoom() {
+    this.save();
+    this.sync();
+  }
+
   bringToFront(id: string) {
     this.players.update((list) =>
       list.map((p, i) => {
