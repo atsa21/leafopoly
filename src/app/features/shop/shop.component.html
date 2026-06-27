@@ -23,6 +23,7 @@
               <s>{{ it.price }}</s>
             }
             <b>{{ it.disp }}</b>
+            <span class="leaf-icon" aria-hidden="true"><app-item-icon key="leaves" /></span>
           </div>
           <button type="button" [disabled]="!it.afford" (click)="game.buy(it.key)">
             {{ it.afford ? 'Cut it out' : 'too dear' }}

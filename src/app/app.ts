@@ -8,6 +8,7 @@ import { RoomComponent } from './features/room/room.component';
 import { LobbyComponent } from './features/lobby/lobby.component';
 import { SettingsComponent } from './features/settings/settings.component';
 import { StartComponent } from './features/start/start.component';
+import { ItemIconComponent } from "./shared/icons/item-icon.component";
 
 const STAGE_W = 1280;
 const STAGE_H = 820;
@@ -23,7 +24,8 @@ const STAGE_H = 820;
     LobbyComponent,
     SettingsComponent,
     StartComponent,
-  ],
+    ItemIconComponent
+],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   host: { '(window:resize)': 'measure()' },

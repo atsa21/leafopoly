@@ -13,11 +13,22 @@
         <div class="pcard" [class.active]="i === game.current()" [style.border-color]="p.color">
           <div class="phead">
             <span class="ptoken" [style.background]="p.color">{{ p.init }}</span>
-            <span class="pname" [style.color]="p.color">{{ p.name }}</span>
+            <span class="pname-wrap">
+              <span class="pname" [style.color]="p.color">{{ p.name }}</span>
+              @if (i === game.current()) {
+                <span class="pstatus">— Now Playing —</span>
+              }
+            </span>
             <button type="button" (click)="game.openRoom(i)">My Room</button>
           </div>
-          <div class="pleaves">{{ p.leaves }} <small>leaves</small></div>
-          <div class="pmeta">{{ p.coupons.length }} coupon(s) · {{ p.room.length }} item(s)</div>
+          <div class="pleaves">
+            <span class="leaf-icon" aria-hidden="true">
+              <app-item-icon key="leaves" />
+            </span>
+            <span class="pleaves-num">{{ p.leaves }}</span>
+            <small>leaves</small>
+          </div>
+          <div class="pmeta">{{ p.coupons.length }} coupon(s) in hand · {{ p.room.length }} item(s) collected</div>
         </div>
       }
 

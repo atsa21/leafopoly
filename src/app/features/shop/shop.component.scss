@@ -97,9 +97,23 @@ header {
   margin-right: var(--space-1);
 }
 
+.price {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 .price b {
+  text-align: center;
   color: var(--berry);
-  font-size: 18px;
+  font-size: 20px;
+  padding-top: 6px;
+}
+
+.price .leaf-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
 }
 
 .clip button {
