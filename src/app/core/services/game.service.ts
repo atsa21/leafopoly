@@ -46,6 +46,10 @@ export class GameService {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
 
+  private savedMode: 'solo' | 'multi' | null = null;
+  private savedMatchId: string | null = null;
+  private savedSlot = 0;
+
   constructor() {
     this.players.set(this.freshPlayers());
     this.mp.onRemote = (s) => this.applyRemote(s);
@@ -139,6 +143,7 @@ export class GameService {
     const id = await this.hostMatch();
     const { origin, pathname } = window.location;
     this.inviteLink.set(`${origin}${pathname}?m=${id}`);
+    this.save();
     return id;
   }
 
@@ -154,7 +159,12 @@ export class GameService {
   }
 
   resume(): void {
-    this.mode.set('solo');
+    if (this.savedMode === 'multi' && this.savedMatchId) {
+      this.mode.set('multi');
+      this.mp.reconnect(this.savedMatchId, this.savedSlot);
+    } else {
+      this.mode.set('solo');
+    }
     this.started.set(true);
   }
 
@@ -180,11 +190,17 @@ export class GameService {
         current?: unknown;
         dice?: unknown;
         log?: unknown;
+        mode?: unknown;
+        matchId?: unknown;
+        slot?: unknown;
       };
       if (!Array.isArray(s.players)) return null;
       this.current.set(Number.isInteger(s.current) ? (s.current as number) : 0);
       this.dice.set((s.dice as number) || 1);
       this.log.set(Array.isArray(s.log) ? (s.log as string[]) : []);
+      this.savedMode = s.mode === 'multi' ? 'multi' : 'solo';
+      this.savedMatchId = typeof s.matchId === 'string' ? s.matchId : null;
+      this.savedSlot = s.slot === 1 ? 1 : 0;
       // merge so older saves gain newer fields
       return (s.players as Array<Partial<Player>>).map((p) => ({
         coupons: [],
@@ -208,14 +224,14 @@ export class GameService {
           current: this.current(),
           dice: this.dice(),
           log: this.log(),
+          mode: this.mode(),
+          matchId: this.mp.matchId(),
+          slot: this.mp.mySlot(),
         }),
       );
-    } catch {
-      /* storage unavailable (SSR / private mode) — ignore */
-    }
+    } catch {}
   }
 
-  // ---- settings persistence ----
   private loadSettings() {
     try {
       const raw = localStorage.getItem(SETTINGS_KEY);
@@ -235,9 +251,7 @@ export class GameService {
           }),
         );
       }
-    } catch {
-      /* malformed / unavailable — keep defaults */
-    }
+    } catch {}
   }
 
   private saveSettings() {
@@ -250,12 +264,9 @@ export class GameService {
           playerNames: this.playerNames(),
         }),
       );
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
 
-  // ---- settings UI ----
   openSettings() {
     this.view.set('settings');
   }
@@ -263,11 +274,6 @@ export class GameService {
   closeSettings() {
     this.view.set('board');
   }
-
-  /**
-   * Persist the chosen settings. Your name and the pass-go bonus apply to the
-   * game in progress; the new starting-leaves amount takes effect on New Game.
-   */
   applySettings(s: { name: string; startingLeaves: number; passGoBonus: number }) {
     const slot = this.mySlot();
     const name = s.name.trim() || DEFAULT_NAMES[slot] || 'Player';
@@ -279,7 +285,7 @@ export class GameService {
     this.startingLeaves.set(Math.max(0, Math.round(s.startingLeaves) || 0));
     this.passGoBonus.set(Math.max(0, Math.round(s.passGoBonus) || 0));
     this.saveSettings();
-    // Rename your own player without disturbing leaves / positions.
+
     this.players.update((list) =>
       list.map((p, i) =>
         i === slot ? { ...p, name, init: (name[0] ?? '?').toUpperCase() } : p,
@@ -298,7 +304,6 @@ export class GameService {
     this.sync();
   }
 
-  // ---- helpers that mutate one player immutably ----
   private patchCurrent(fn: (p: Player) => Player) {
     this.players.update((list) => list.map((p, i) => (i === this.current() ? fn({ ...p }) : p)));
     this.save();
@@ -313,7 +318,6 @@ export class GameService {
     this.toastTimer = setTimeout(() => this.toastMsg.set(''), 2900);
   }
 
-  /** A transient popup for the watcher; the log line itself arrives via the synced snapshot. */
   private watchToast(msg: string) {
     clearTimeout(this.toastTimer);
     this.toastMsg.set(msg);
@@ -331,13 +335,12 @@ export class GameService {
       this.toast('skips this turn.');
       return this.endTurn();
     }
-    // Decide the result up front so the watching player can replay the same roll.
+
     const n = 1 + Math.floor(Math.random() * 6);
     this.mp.pushAnim({ n, slot: this.current() });
     this.rattle(n, () => this.walk(n));
   }
 
-  /** The cosmetic dice tumble, settling on `final`, then `done()`. Shared by both players. */
   private rattle(final: number, done: () => void) {
     this.rolling.set(true);
     this.toastMsg.set('');
@@ -370,7 +373,6 @@ export class GameService {
     step();
   }
 
-  /** Watcher side: replay the active player's turn with no rule effects or turn change. */
   private playWatch(a: RollAnim) {
     clearTimeout(this.timer);
     if (a.skip) {
@@ -413,7 +415,6 @@ export class GameService {
       this.toast('lucky find — a free ' + ITEMS[key].name + ' for your room!');
       this.endTurn();
     } else {
-      // leaf or rest
       const d = sq.delta || 0;
       if (d || sq.skip)
         this.patchCurrent((p) => ({
@@ -433,13 +434,10 @@ export class GameService {
     this.sync();
   }
 
-  // ---- online sync ----
-  /** Host a new online match; returns the join code (slot 0 = you). */
   hostMatch(): Promise<string> {
     return this.mp.host(this.snapshot());
   }
 
-  /** Join an existing match by code (slot 1 = you). */
   joinMatch(id: string) {
     this.mp.join(id);
   }
@@ -470,14 +468,9 @@ export class GameService {
     this.save();
   }
 
-  // ---- shop ----
-  /** A freshly placed room item, scattered at a random spot with a slight tilt. */
   private newRoomItem(key: string): RoomItem {
     const id = 'it' + Date.now() + Math.floor(Math.random() * 999);
 
-    // Floor-resting items spawn anchored to the floor (design space 720×440,
-    // floor band ~382–440) instead of scattered up the back wall, and sit
-    // upright/flat rather than tilted.
     if (key === 'rug') {
       return { id, key, x: 250 + Math.round(Math.random() * 80), y: 340, rot: 0 };
     }
@@ -521,7 +514,6 @@ export class GameService {
     this.endTurn();
   }
 
-  // ---- coupon mini-game ----
   cut() {
     if (this.view() !== 'coupon' || this.couponDone() || this.cutStep() >= 4) return;
     const ns = this.cutStep() + 1;
@@ -536,7 +528,6 @@ export class GameService {
     this.endTurn();
   }
 
-  // ---- room ----
   openRoom(idx: number) {
     this.roomOwner.set(idx);
     this.view.set('room');

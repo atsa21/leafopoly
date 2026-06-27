@@ -82,6 +82,15 @@ export class MultiplayerService {
     this.listen(id);
   }
 
+  reconnect(id: string, slot: number): void {
+    this.matchId.set(id);
+    this.mySlot.set(slot);
+    this.online.set(true);
+    this.status.set(slot === 0 ? 'connected' : 'joining');
+    this.seq = 0;
+    this.listen(id);
+  }
+
   async push(state: MatchState): Promise<void> {
     const id = this.matchId();
     if (!this.online() || !id) return;
