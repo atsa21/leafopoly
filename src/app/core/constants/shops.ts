@@ -8,7 +8,7 @@ export const SHOPS: Record<EShopCategory, ShopDef> = {
     category: EShopCategory.Furniture,
     items: [
       { key: 'lamp', name: 'Reading Lamp', tag: 'warm glow', price: 9, size: 1.9 },
-      { key: 'shelf', name: 'Book Nook', tag: 'holds 30', price: 14, size: 1.3 },
+      { key: 'shelf', name: 'Book Nook', tag: 'holds 30', price: 14, size: 3 },
       { key: 'rug', name: 'Woven Rug', tag: 'soft underfoot', price: 12, size: 1.4 },
       { key: 'table', name: 'Side Table', tag: 'sturdy oak', price: 11, size: 1.2 },
       { key: 'bed', name: 'Cosy Bed', tag: 'comfy nap', price: 20, size: 3 },

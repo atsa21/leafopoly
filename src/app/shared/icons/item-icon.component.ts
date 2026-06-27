@@ -31,12 +31,13 @@ import bedRoom from '@assets/icons/bed_room.svg';
 import curtainRoom from '@assets/icons/curtain_room.svg';
 import lampRoom from '@assets/icons/lamp_room.svg';
 import windowRoom from '@assets/icons/window_room.svg';
+import shelfRoom from '@assets/icons/shelf_room.svg';
 
 const ART: Record<string, string> = {
   juice, clock, books, mug, plant, fern, cactus, rug, cat, dog, fish, lamp,
   poster, shelf, teddy, paints, leaves, gust, window: windowSvg, curtain, rain,
   lemonade, gift, tree, table, bed,
-  bed_room: bedRoom, curtain_room: curtainRoom, lamp_room: lampRoom, window_room: windowRoom
+  bed_room: bedRoom, curtain_room: curtainRoom, lamp_room: lampRoom, window_room: windowRoom, shelf_room: shelfRoom,
 };
 
 function innerArt(svg: string): string {

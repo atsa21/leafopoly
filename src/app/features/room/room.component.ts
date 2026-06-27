@@ -54,7 +54,7 @@ export class RoomComponent {
       case 'lamp':
         return Math.round(this.height(key) * (60 / 88));
       case 'shelf':
-        return Math.round(this.height(key) * (60 / 40));
+        return Math.round(this.height(key) * (60 / 88));
       case 'window':
         return Math.round(this.height(key) * (30 / 44));
       case 'bed':
@@ -67,14 +67,22 @@ export class RoomComponent {
   }
 
   height(key: string): number {
-    if (key === 'curtain') return Math.round(this.ROOM_H * 0.75);
-    if (key === 'lamp') return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
-    if (key === 'shelf') return Math.round(this.UNIT * 1.4);
-    if (key === 'window') return Math.round(this.ROOM_H * 0.4);
-    if (key === 'bed') return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
-    if (key === 'rug') return Math.round(this.size(key) * (28 / 60));
-
-    return this.size(key);
+    switch(key) {
+      case 'curtain':
+        return Math.round(this.ROOM_H * 0.75);
+      case 'lamp':
+        return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
+      case 'shelf':
+        return Math.round(this.ROOM_H * 0.7);
+      case 'window':
+        return Math.round(this.ROOM_H * 0.4);
+      case 'bed':
+        return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
+      case 'rug':
+        return Math.round(this.size(key) * (28 / 60));
+      default:
+        return this.size(key);
+    }
   }
 
   private drag: { id: string; dx: number; dy: number } | null = null;
