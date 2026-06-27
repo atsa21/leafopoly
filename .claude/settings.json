@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run *)",
       "PowerShell(npm run build 2>&1)",
-      "Bash(npx ng *)"
+      "Bash(npx ng *)",
+      "PowerShell(npx ng build --configuration development 2>&1)"
     ]
   }
 }

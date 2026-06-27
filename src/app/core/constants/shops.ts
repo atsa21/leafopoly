@@ -6,9 +6,11 @@ export const SHOPS: Record<string, ShopDef> = {
     accent: '#7a6a2e',
     category: 'furniture',
     items: [
-      { key: 'lamp', name: 'Reading Lamp', tag: 'warm glow', price: 9, size: 1.05 },
+      { key: 'lamp', name: 'Reading Lamp', tag: 'warm glow', price: 9, size: 1.9 },
       { key: 'shelf', name: 'Book Nook', tag: 'holds 30', price: 14, size: 1.3 },
       { key: 'rug', name: 'Woven Rug', tag: 'soft underfoot', price: 12, size: 1.4 },
+      { key: 'table', name: 'Side Table', tag: 'sturdy oak', price: 11, size: 1.2 },
+      { key: 'bed', name: 'Cosy Bed', tag: 'comfy nap', price: 20, size: 3 },
     ],
   },
   decor: {
@@ -16,10 +18,10 @@ export const SHOPS: Record<string, ShopDef> = {
     accent: '#6a4a7a',
     category: 'decor',
     items: [
-      { key: 'poster', name: 'Art Poster', tag: 'framed', price: 5, size: 1.1 },
+      { key: 'poster', name: 'Art Poster', tag: 'framed', price: 5, size: 2 },
       { key: 'paints', name: 'Paint Set', tag: '12 colours', price: 8, size: 0.9 },
       { key: 'teddy', name: 'Teddy Bear', tag: 'well hugged', price: 10, size: 1 },
-      { key: 'cactus', name: 'Lil Cactus', tag: 'no fuss', price: 5, size: 0.85 },
+      { key: 'cactus', name: 'Lil Cactus', tag: 'no fuss', price: 5, size: 1.1 },
     ],
   },
   room: {
@@ -27,7 +29,7 @@ export const SHOPS: Record<string, ShopDef> = {
     accent: '#36617e',
     category: 'room',
     items: [
-      { key: 'window', name: 'Bay Window', tag: 'lets light in', price: 16, size: 1.35 },
+      { key: 'window', name: 'Bay Window', tag: 'lets light in', price: 16, size: 2 },
       { key: 'curtain', name: 'Linen Curtains', tag: 'soft drape', price: 9, size: 1.3 },
       { key: 'plant', name: 'Window Plant', tag: 'blooms weekly', price: 7, size: 1 },
       { key: 'fern', name: 'Leafy Fern', tag: 'easy keeper', price: 6, size: 1 },

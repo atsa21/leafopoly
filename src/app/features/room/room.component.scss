@@ -9,6 +9,8 @@
 }
 
 .sheet {
+  width: 760px;
+  max-width: 94vw;
   background: var(--paper);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-sm);
@@ -41,8 +43,9 @@ header {
 
 .room {
   position: relative;
-  width: 720px;
-  height: 440px;
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 720 / 440;
   margin: 0 auto;
   overflow: hidden;
   background: #e7dcc0;
@@ -57,32 +60,33 @@ header {
   inset: 0;
 }
 
+// Corners as percentages of the 720×440 box so the walls flex with the room.
 .ceil {
   background: #efe7d2;
-  clip-path: polygon(0 0, 720px 0, 662px 58px, 58px 58px);
+  clip-path: polygon(0 0, 100% 0, 91.94% 13.18%, 8.06% 13.18%);
 }
 
 .wleft {
   background: #d9cdac;
-  clip-path: polygon(0 0, 58px 58px, 58px 382px, 0 440px);
+  clip-path: polygon(0 0, 8.06% 13.18%, 8.06% 86.82%, 0 100%);
 }
 
 .wright {
   background: #cfc1a0;
-  clip-path: polygon(720px 0, 662px 58px, 662px 382px, 720px 440px);
+  clip-path: polygon(100% 0, 91.94% 13.18%, 91.94% 86.82%, 100% 100%);
 }
 
 .floor {
   background: linear-gradient(#cdb588, #c0a673);
-  clip-path: polygon(58px 382px, 662px 382px, 720px 440px, 0 440px);
+  clip-path: polygon(8.06% 86.82%, 91.94% 86.82%, 100% 100%, 0 100%);
 }
 
 .back {
   position: absolute;
-  left: 58px;
-  top: 58px;
-  width: 604px;
-  height: 324px;
+  left: 8.06%;
+  top: 13.18%;
+  width: 83.89%;
+  height: 73.64%;
   background: repeating-linear-gradient(#e9dec2 0 30px, #e5d9ba 30px 31px);
 }
 
@@ -91,6 +95,51 @@ header {
   cursor: grab;
   touch-action: none;
   filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.3));
+}
+
+// A warm pool of light cast by the reading lamp. Sits behind the icon (z-index
+// -1) and over the floor, with a slow flicker. The radial gradient is alpha
+// only, so it reads as light spilling onto whatever is below.
+.lamp-glow {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 260%;
+  height: 260%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 231, 158, 0.6) 0%,
+    rgba(255, 213, 122, 0.34) 28%,
+    rgba(255, 198, 105, 0.12) 52%,
+    rgba(255, 190, 95, 0) 72%
+  );
+  animation: lamp-flicker 4.5s ease-in-out infinite;
+}
+
+@keyframes lamp-flicker {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  70% {
+    opacity: 0.92;
+    transform: translate(-50%, -50%) scale(0.99);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp-glow {
+    animation: none;
+  }
 }
 
 .empty {

@@ -440,8 +440,20 @@ export class GameService {
   // ---- shop ----
   /** A freshly placed room item, scattered at a random spot with a slight tilt. */
   private newRoomItem(key: string): RoomItem {
+    const id = 'it' + Date.now() + Math.floor(Math.random() * 999);
+
+    // Floor-resting items spawn anchored to the floor (design space 720×440,
+    // floor band ~382–440) instead of scattered up the back wall, and sit
+    // upright/flat rather than tilted.
+    if (key === 'rug') {
+      return { id, key, x: 250 + Math.round(Math.random() * 80), y: 340, rot: 0 };
+    }
+    if (key === 'lamp') {
+      return { id, key, x: 120 + Math.round(Math.random() * 420), y: 320, rot: 0 };
+    }
+
     return {
-      id: 'it' + Date.now() + Math.floor(Math.random() * 999),
+      id,
       key,
       x: 140 + Math.random() * 360,
       y: 150 + Math.random() * 200,
@@ -507,5 +519,18 @@ export class GameService {
         i !== this.roomOwner() ? p : { ...p, room: p.room.map((r) => (r.id === id ? { ...r, x, y } : r)) },
       ),
     );
+  }
+
+  /** Raise a room item above the rest by moving it to the end of the paint order. */
+  bringToFront(id: string) {
+    this.players.update((list) =>
+      list.map((p, i) => {
+        if (i !== this.roomOwner()) return p;
+        const item = p.room.find((r) => r.id === id);
+        if (!item || p.room[p.room.length - 1]?.id === id) return p;
+        return { ...p, room: [...p.room.filter((r) => r.id !== id), item] };
+      }),
+    );
+    this.save();
   }
 }
