@@ -12,6 +12,7 @@ export const SHOPS: Record<EShopCategory, ShopDef> = {
       { key: 'rug', name: 'Woven Rug', tag: 'soft underfoot', price: 12, size: 1.4 },
       { key: 'table', name: 'Side Table', tag: 'sturdy oak', price: 11, size: 1.2 },
       { key: 'bed', name: 'Cosy Bed', tag: 'comfy nap', price: 20, size: 3 },
+      { key: 'desk', name: 'Study Desk', tag: 'get to work', price: 15, size: 3 },
     ],
   },
   [EShopCategory.Decor]: {
@@ -20,7 +21,7 @@ export const SHOPS: Record<EShopCategory, ShopDef> = {
     category: EShopCategory.Decor,
     items: [
       { key: 'poster', name: 'Art Poster', tag: 'framed', price: 5, size: 2 },
-      { key: 'paints', name: 'Paint Set', tag: '12 colours', price: 8, size: 0.9 },
+      { key: 'guitar', name: 'Guitar', tag: 'strum along', price: 8, size: 0.9 },
       { key: 'teddy', name: 'Teddy Bear', tag: 'well hugged', price: 10, size: 1 },
       { key: 'cactus', name: 'Lil Cactus', tag: 'no fuss', price: 5, size: 1.1 },
     ],
@@ -44,6 +45,7 @@ export const SHOPS: Record<EShopCategory, ShopDef> = {
       { key: 'cat', name: 'Tabby Kitten', tag: 'purrs free', price: 15, size: 1.05 },
       { key: 'dog', name: 'Spotty Pup', tag: 'good boy', price: 18, size: 1.2 },
       { key: 'fish', name: 'Goldfish', tag: 'blub blub', price: 6, size: 0.85 },
+      { key: 'pet_bed', name: 'Pet Bed', tag: 'snug naps', price: 12, size: 1.5 },
     ],
   },
   [EShopCategory.Other]: {

@@ -229,3 +229,80 @@
     color: var(--berry);
   }
 }
+
+@media (max-width: 660px) {
+  .board {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 760 / 776;
+    container-type: inline-size;
+    gap: 0.2cqw;
+    border-width: 0.9cqw;
+  }
+
+  .card {
+    padding: 1.2cqw 0.5cqw 2.7cqw;
+  }
+
+  .card.coupon {
+    padding-top: 8.6cqw;
+
+    &::before {
+      inset: 0.8cqw;
+    }
+  }
+
+  .snips {
+    width: 5.1cqw;
+    height: 6.2cqw;
+    top: 1.1cqw;
+  }
+
+  .stripe {
+    height: 0.7cqw;
+  }
+
+  .icon {
+    width: 5.1cqw;
+    height: 5.1cqw;
+    margin-top: 0.8cqw;
+  }
+
+  .label {
+    font-size: 2cqw;
+  }
+
+  .sub {
+    font-size: 1.1cqw;
+  }
+
+  .token {
+    width: 3.1cqw;
+    height: 3.1cqw;
+    bottom: 0.4cqw;
+    border-width: 0.27cqw;
+    font-size: 1.9cqw;
+  }
+
+  .masthead {
+    padding: 3cqw;
+
+    .kicker {
+      font-size: 1.5cqw;
+    }
+
+    h1 {
+      font-size: 8.3cqw;
+      margin: 1.7cqw 0 0.8cqw;
+    }
+
+    .tagline {
+      font-size: 2.1cqw;
+    }
+
+    .cta {
+      margin-top: 1.7cqw;
+      font-size: 2.7cqw;
+    }
+  }
+}

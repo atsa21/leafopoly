@@ -9,7 +9,8 @@
     "build:local": "ng build --configuration production,local",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:leafopoly": "node dist/leafopoly/server/server.mjs"
+    "serve:ssr:leafopoly": "node dist/leafopoly/server/server.mjs",
+    "deploy": "firebase deploy"
   },
   "private": true,
   "packageManager": "npm@10.9.8",

@@ -233,3 +233,56 @@
   border-radius: var(--r-pill);
   box-shadow: var(--sh-lg);
 }
+
+@media (max-width: 660px) {
+  .fit {
+    position: static;
+    display: block;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .stage {
+    transform: none !important;
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .bg {
+    position: fixed;
+  }
+
+  .layout {
+    flex-direction: column;
+    height: auto;
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  app-board {
+    display: block;
+    width: 100%;
+  }
+
+  .right {
+    width: 100%;
+  }
+
+  .crier {
+    flex: none;
+    max-height: 240px;
+  }
+
+  .topbar {
+    position: static;
+    justify-content: center;
+    padding: var(--space-5) 0;
+  }
+
+  .toast {
+    position: fixed;
+  }
+}

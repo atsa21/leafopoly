@@ -16,7 +16,7 @@ import lamp from '@assets/icons/lamp.svg';
 import poster from '@assets/icons/poster.svg';
 import shelf from '@assets/icons/shelf.svg';
 import teddy from '@assets/icons/teddy.svg';
-import paints from '@assets/icons/paints.svg';
+import guitar from '@assets/icons/guitar.svg';
 import leaves from '@assets/icons/leaves.svg';
 import leaf from '@assets/icons/leaf.svg';
 import gust from '@assets/icons/gust.svg';
@@ -28,6 +28,9 @@ import gift from '@assets/icons/gift.svg';
 import tree from '@assets/icons/tree.svg';
 import table from '@assets/icons/table.svg';
 import bed from '@assets/icons/bed.svg';
+import petBed from '@assets/icons/pet_bed.svg';
+import desk from '@assets/icons/desk.svg';
+import deskRoom from '@assets/icons/desk_room.svg';
 import bedRoom from '@assets/icons/bed_room.svg';
 import curtainRoom from '@assets/icons/curtain_room.svg';
 import lampRoom from '@assets/icons/lamp_room.svg';
@@ -36,9 +39,9 @@ import shelfRoom from '@assets/icons/shelf_room.svg';
 
 const ART: Record<string, string> = {
   juice, clock, books, mug, plant, fern, cactus, rug, cat, dog, fish, lamp,
-  poster, shelf, teddy, paints, leaves, leaf, gust, window: windowSvg, curtain, rain,
-  lemonade, gift, tree, table, bed,
-  bed_room: bedRoom, curtain_room: curtainRoom, lamp_room: lampRoom, window_room: windowRoom, shelf_room: shelfRoom,
+  poster, shelf, teddy, guitar, leaves, leaf, gust, window: windowSvg, curtain, rain,
+  lemonade, gift, tree, table, bed, pet_bed: petBed, desk,
+  bed_room: bedRoom, desk_room: deskRoom, curtain_room: curtainRoom, lamp_room: lampRoom, window_room: windowRoom, shelf_room: shelfRoom,
 };
 
 function innerArt(svg: string): string {

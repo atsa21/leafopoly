@@ -58,6 +58,7 @@ export class RoomComponent {
       case 'window':
         return Math.round(this.height(key) * (30 / 44));
       case 'bed':
+      case 'desk':
         return Math.round(this.height(key) * (88 / 60));
       case 'rug':
         return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1) * 2);
@@ -77,6 +78,7 @@ export class RoomComponent {
       case 'window':
         return Math.round(this.ROOM_H * 0.4);
       case 'bed':
+      case 'desk':
         return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
       case 'rug':
         return Math.round(this.size(key) * (28 / 60));

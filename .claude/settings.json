@@ -4,7 +4,8 @@
       "Bash(npm run *)",
       "PowerShell(npm run build 2>&1)",
       "Bash(npx ng *)",
-      "PowerShell(npx ng build --configuration development 2>&1)"
+      "PowerShell(npx ng build --configuration development 2>&1)",
+      "Bash(git -C \"d:/code/pet projects/leafopoly\" rm \"src/assets/icons/paints.svg\")"
     ]
   }
 }

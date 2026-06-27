@@ -277,3 +277,16 @@ h1 {
     color: var(--ink);
   }
 }
+
+@media (max-width: 660px) {
+  .start {
+    position: fixed;
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: var(--space-4);
+  }
+
+  h1 {
+    font-size: clamp(36px, 12vw, 64px);
+  }
+}
