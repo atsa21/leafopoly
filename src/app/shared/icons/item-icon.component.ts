@@ -2,8 +2,8 @@ import { Component, inject, input, computed, ViewEncapsulation } from '@angular/
 import { DomSanitizer } from '@angular/platform-browser';
 
 import juice from '@assets/icons/juice.svg';
-import bread from '@assets/icons/bread.svg';
-import cookies from '@assets/icons/cookies.svg';
+import clock from '@assets/icons/clock.svg';
+import books from '@assets/icons/books.svg';
 import mug from '@assets/icons/mug.svg';
 import plant from '@assets/icons/plant.svg';
 import fern from '@assets/icons/fern.svg';
@@ -33,7 +33,7 @@ import lampRoom from '@assets/icons/lamp_room.svg';
 import windowRoom from '@assets/icons/window_room.svg';
 
 const ART: Record<string, string> = {
-  juice, bread, cookies, mug, plant, fern, cactus, rug, cat, dog, fish, lamp,
+  juice, clock, books, mug, plant, fern, cactus, rug, cat, dog, fish, lamp,
   poster, shelf, teddy, paints, leaves, gust, window: windowSvg, curtain, rain,
   lemonade, gift, tree, table, bed,
   bed_room: bedRoom, curtain_room: curtainRoom, lamp_room: lampRoom, window_room: windowRoom
