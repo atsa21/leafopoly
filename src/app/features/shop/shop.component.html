@@ -15,18 +15,18 @@
             @if (it.owned > 0) {
               <span class="owned" aria-label="Already owned: {{ it.owned }}">×{{ it.owned }}</span>
             }
-            <div class="art-scale" [style.width.px]="58 * it.size" [style.height.px]="58 * it.size">
-              <app-item-icon [key]="it.key" [crisp]="true" />
+            <div class="art-scale">
+              <app-item-icon [key]="it.key" />
             </div>
           </div>
           <div class="name">{{ it.name }}</div>
           <div class="tag">{{ it.tag }}</div>
           <div class="price">
+            <span class="leaf-icon" aria-hidden="true"><app-item-icon key="leaf" /></span>
             @if (it.disc) {
               <s>{{ it.price }}</s>
             }
             <b>{{ it.disp }}</b>
-            <span class="leaf-icon" aria-hidden="true"><app-item-icon key="leaves" /></span>
           </div>
           <button type="button" [disabled]="!it.afford" (click)="game.buy(it.key)">
             {{ it.afford ? 'Cut it out' : 'too dear' }}

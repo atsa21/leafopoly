@@ -71,13 +71,17 @@ header {
 }
 
 .art {
-  // fixed row so card text stays aligned; the icon inside scales by item size
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 82px;
+
+  &-scale {
+    height: 60px;
+    width: 60px;
+  }
 }
 
 .owned {

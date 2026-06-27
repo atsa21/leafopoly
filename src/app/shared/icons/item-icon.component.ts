@@ -18,6 +18,7 @@ import shelf from '@assets/icons/shelf.svg';
 import teddy from '@assets/icons/teddy.svg';
 import paints from '@assets/icons/paints.svg';
 import leaves from '@assets/icons/leaves.svg';
+import leaf from '@assets/icons/leaf.svg';
 import gust from '@assets/icons/gust.svg';
 import windowSvg from '@assets/icons/window.svg';
 import curtain from '@assets/icons/curtain.svg';
@@ -35,7 +36,7 @@ import shelfRoom from '@assets/icons/shelf_room.svg';
 
 const ART: Record<string, string> = {
   juice, clock, books, mug, plant, fern, cactus, rug, cat, dog, fish, lamp,
-  poster, shelf, teddy, paints, leaves, gust, window: windowSvg, curtain, rain,
+  poster, shelf, teddy, paints, leaves, leaf, gust, window: windowSvg, curtain, rain,
   lemonade, gift, tree, table, bed,
   bed_room: bedRoom, curtain_room: curtainRoom, lamp_room: lampRoom, window_room: windowRoom, shelf_room: shelfRoom,
 };
