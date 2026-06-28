@@ -10,20 +10,26 @@ import {
 } from '@angular/core';
 import { GameService } from '@core/services/game.service';
 import { SoundService } from '@core/services/sound.service';
-import { ItemIconComponent } from '@shared/icons/item-icon.component';
-import { ITEMS, CATEGORY_LABELS } from '@core/constants';
+import { ViewportService } from '@core/services/viewport.service';
+import { CATEGORY_LABELS } from '@core/constants';
 
 import { Player } from '@core/models';
+import { RoomItemComponent } from './components/room-item/room-item.component';
+import { ROOM_H, UNIT, itemHeight, itemSize } from './room-item.metrics';
 
 @Component({
   selector: 'app-room',
-  imports: [ItemIconComponent],
+  imports: [RoomItemComponent],
   templateUrl: './room.component.html',
   styleUrl: './room.component.scss',
 })
 export class RoomComponent {
   game = inject(GameService);
   private sound = inject(SoundService);
+  private viewport = inject(ViewportService);
+
+  /** True when the viewport is at most 660px wide. */
+  isMobile = this.viewport.isMobile;
   private destroyRef = inject(DestroyRef);
   surface = viewChild<ElementRef<HTMLDivElement>>('surface');
   owner = (): Player => this.game.players()[this.game.roomOwner()];
@@ -42,8 +48,6 @@ export class RoomComponent {
   });
 
   private readonly BASE_W = 720;
-  private readonly ROOM_H = 440;
-  private readonly UNIT = 50;
   scale = signal(1);
 
   constructor() {
@@ -56,51 +60,6 @@ export class RoomComponent {
       ro.observe(el);
       this.destroyRef.onDestroy(() => ro.disconnect());
     });
-  }
-
-  label(key: string): string {
-    return ITEMS[key]?.name ?? key;
-  }
-
-  // --- design-space (720×440) sizes; the template multiplies by scale() ---
-  size(key: string): number {
-    switch(key) {
-      case 'curtain':
-        return Math.round(this.height(key) * (60 / 88));
-      case 'lamp':
-        return Math.round(this.height(key) * (60 / 88));
-      case 'shelf':
-        return Math.round(this.height(key) * (60 / 88));
-      case 'window':
-        return Math.round(this.height(key) * (30 / 44));
-      case 'bed':
-      case 'desk':
-        return Math.round(this.height(key) * (88 / 60));
-      case 'rug':
-        return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1) * 2);
-      default:
-        return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
-    }
-  }
-
-  height(key: string): number {
-    switch(key) {
-      case 'curtain':
-        return Math.round(this.ROOM_H * 0.75);
-      case 'lamp':
-        return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
-      case 'shelf':
-        return Math.round(this.ROOM_H * 0.7);
-      case 'window':
-        return Math.round(this.ROOM_H * 0.4);
-      case 'bed':
-      case 'desk':
-        return Math.round(this.UNIT * (ITEMS[key]?.size ?? 1));
-      case 'rug':
-        return Math.round(this.size(key) * (28 / 60));
-      default:
-        return this.size(key);
-    }
   }
 
   private drag: { id: string; dx: number; dy: number } | null = null;
@@ -134,10 +93,10 @@ export class RoomComponent {
     const rect = this.surface()!.nativeElement.getBoundingClientRect();
     const s = this.scale();
     const item = this.owner().room.find((r) => r.id === this.drag!.id);
-    const w = (item ? this.size(item.key) : this.UNIT) + 4;
-    const h = (item ? this.height(item.key) : this.UNIT) + 4;
+    const w = (item ? itemSize(item.key) : UNIT) + 4;
+    const h = (item ? itemHeight(item.key) : UNIT) + 4;
     const x = Math.max(4, Math.min(this.BASE_W - w, (e.clientX - rect.left) / s - this.drag.dx));
-    const y = Math.max(4, Math.min(this.ROOM_H - h, (e.clientY - rect.top) / s - this.drag.dy));
+    const y = Math.max(4, Math.min(ROOM_H - h, (e.clientY - rect.top) / s - this.drag.dy));
     this.game.moveItem(this.drag.id, x, y);
   }
 

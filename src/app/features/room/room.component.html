@@ -13,48 +13,13 @@
       <div class="back"></div>
 
       @for (r of owner().room; track r.id) {
-        <div
-          class="thing"
-          [class.lamp]="r.key === 'lamp' || r.key === 'ceiling_lamp'"
-          [class.locked]="!game.canEditRoom()"
-          [style.left.px]="r.x * scale()"
-          [style.top.px]="r.y * scale()"
-          [style.width.px]="size(r.key) * scale()"
-          [style.height.px]="height(r.key) * scale()"
-          [attr.aria-label]="label(r.key)"
-          (pointerdown)="onDown($event, r.id)"
-        >
-          @if (r.key === 'lamp' || r.key === 'ceiling_lamp') {
-            <span class="lamp-glow" [class.ceiling]="r.key === 'ceiling_lamp'" aria-hidden="true"></span>
-          }
-
-          @switch (r.key) {
-            @case ('curtain') {
-              <app-item-icon key="curtain_room" [crisp]="true" [stretch]="true" viewBox="0 0 60 88" />
-            }
-            @case ('rug') {
-              <app-item-icon [key]="r.key" [crisp]="true" [stretch]="true" viewBox="0 20 60 28" />
-            }
-            @case ('window') {
-              <app-item-icon key="window_room" [crisp]="true" [stretch]="true" viewBox="0 0 60 88" />
-            }
-            @case ('lamp') {
-              <app-item-icon key="lamp_room" [crisp]="true" [stretch]="true" viewBox="0 0 60 88" />
-            }
-            @case ('shelf') {
-              <app-item-icon key="shelf_room" [crisp]="true" [stretch]="true" viewBox="0 0 60 88" />
-            }
-            @case ('bed') {
-              <app-item-icon key="bed_room" [crisp]="true" [stretch]="true" viewBox="0 0 88 60" />
-            }
-            @case ('desk') {
-              <app-item-icon key="desk_room" [crisp]="true" [stretch]="true" viewBox="0 0 88 60" />
-            }
-            @default {
-              <app-item-icon [key]="r.key" [crisp]="true" />
-            }
-          }
-        </div>
+        <app-room-item
+          [item]="r"
+          [scale]="scale()"
+          [isMobile]="isMobile()"
+          [canEdit]="game.canEditRoom()"
+          (pickup)="onDown($event, r.id)"
+        />
       }
 
       @if (owner().room.length === 0) {
