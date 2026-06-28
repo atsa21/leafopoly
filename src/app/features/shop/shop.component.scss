@@ -155,8 +155,14 @@ header {
 
 .price .leaf-icon {
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 27px;
+  align-self: center;
+
+  img {
+    width: 18px;
+    height: 27px;
+  }
 }
 
 .clip button {

@@ -26,7 +26,9 @@
           <div class="name">{{ it.name }}</div>
           <div class="tag">{{ it.tag }}</div>
           <div class="price">
-            <span class="leaf-icon" aria-hidden="true"><app-item-icon key="leaf" /></span>
+            <span class="leaf-icon" aria-hidden="true">
+              <img src="img/leaf.png" alt="leaf"/>
+            </span>
             @if (it.disc) {
               <s>{{ it.price }}</s>
             }
