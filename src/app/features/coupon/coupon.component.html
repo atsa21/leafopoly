@@ -5,15 +5,21 @@
       <h2 id="coupon-title">Snip a Coupon</h2>
     </header>
     <p class="howto">
-      Click to cut along the dotted line — four snips, going around. ({{ game.cutStep() }}/4)
+      Drag the scissors like a zipper — all the way around the dotted line. ({{ game.cutStep() }}/4)
     </p>
 
     <button
       class="wrap"
       type="button"
+      [class.cutting]="dragging()"
       [disabled]="game.couponDone()"
-      [attr.aria-label]="'Snip the coupon, ' + game.cutStep() + ' of 4 cuts made'"
-      (click)="snip()"
+      [attr.aria-label]="'Drag the scissors along the dotted line to cut, ' + game.cutStep() + ' of 4 cuts made'"
+      (pointerdown)="onDown($event)"
+      (pointermove)="onMove($event)"
+      (pointerup)="onUp()"
+      (pointercancel)="onUp()"
+      (touchmove)="onTouchMove($event)"
+      (click)="onClick($event)"
     >
       <span class="clip">
         <span class="ticket" [class.done]="game.couponDone()">
@@ -24,11 +30,15 @@
           <span class="barcode" aria-hidden="true"></span>
         </span>
       </span>
-      <i class="edge top" [class.cut]="game.cutStep() > 0"></i>
-      <i class="edge right" [class.cut]="game.cutStep() > 1"></i>
-      <i class="edge bottom" [class.cut]="game.cutStep() > 2"></i>
-      <i class="edge left" [class.cut]="game.cutStep() > 3"></i>
-      <span class="scissors" [style.left.px]="corner()[0]" [style.top.px]="corner()[1]">✂</span>
+      <i class="edge top"></i>
+      <i class="edge right"></i>
+      <i class="edge bottom"></i>
+      <i class="edge left"></i>
+      <i class="cut top" [style.transform]="'scaleX(' + fills().top + ')'"></i>
+      <i class="cut right" [style.transform]="'scaleY(' + fills().right + ')'"></i>
+      <i class="cut bottom" [style.transform]="'scaleX(' + fills().bottom + ')'"></i>
+      <i class="cut left" [style.transform]="'scaleY(' + fills().left + ')'"></i>
+      <span class="scissors" [class.live]="dragging()" [style.left.px]="scissors()[0]" [style.top.px]="scissors()[1]">✂</span>
     </button>
 
     <div class="foot">
@@ -37,7 +47,7 @@
           Tuck it in my pocket →
         </button>
       } @else {
-        <p>Keep snipping… move those scissors around the corner.</p>
+        <p>Keep dragging… trace the scissors around the corner.</p>
       }
     </div>
   </div>

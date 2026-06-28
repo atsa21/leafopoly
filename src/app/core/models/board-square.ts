@@ -9,6 +9,7 @@ export interface BoardSquare {
   shop?: EShopCategory;
   category?: EShopCategory | LeafCategory | RestCategory;
   icon?: string;
+  img?: string;
   delta?: number;
   skip?: boolean;
   msg?: string;

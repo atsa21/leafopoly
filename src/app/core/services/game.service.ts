@@ -492,6 +492,15 @@ export class GameService {
 
   private applyRemote(s: MatchSnapshot) {
     this.applying = true;
+
+    if (this.mp.online() && this.isMyTurn()) {
+      const mine = this.mp.mySlot();
+      this.players.set(s.players.map((p, i) => (i === mine ? this.players()[i] : p)));
+      this.applying = false;
+      this.save();
+      return;
+    }
+
     clearTimeout(this.timer);
     this.players.set(s.players);
     this.current.set(s.current);

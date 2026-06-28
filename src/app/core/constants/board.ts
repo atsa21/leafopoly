@@ -44,6 +44,7 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
       sub = '',
       accent = '',
       icon = '',
+      img = '',
       msg = d.msg ?? '';
     let category = d.category;
 
@@ -52,7 +53,7 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
         label = 'START';
         sub = 'collect ' + passGoBonus;
         accent = '#5d7d39';
-        icon = 'tree';
+        img = 'img/tree.png';
         break;
       case 'shop':
         const s = SHOPS[d.shop!];
@@ -74,13 +75,13 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
           label = 'LEAF PILE';
           sub = '+' + d.delta + ' leaves';
           accent = '#5d7d39';
-          icon = 'leaves';
+          img = 'img/leaves.png';
           msg = 'found ' + d.delta + ' leaves on the path!';
         } else {
           label = 'OOPS';
           sub = d.delta + ' leaves';
           accent = '#9a4036';
-          icon = 'gust';
+          img = 'img/gust.png';
           msg = 'a gust blew some leaves away (' + d.delta + ').';
         }
         break;
@@ -95,7 +96,7 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
           label = 'RAINY DAY';
           sub = 'stay cosy';
           accent = '#5b7287';
-          icon = 'rain';
+          img = 'img/rain.png';
           msg = 'rainy day — cosy indoors for a moment.';
         }
         break;
@@ -103,9 +104,9 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
         label = 'LUCKY FIND';
         sub = 'free for your room';
         accent = '#7a9a4e';
-        icon = 'gift';
+        img = 'img/gift.png';
     }
 
-    return { ...d, i, label, sub, accent, icon, msg, category, corner, gr: p.r, gc: p.c } as BoardSquare;
+    return { ...d, i, label, sub, accent, icon, img, msg, category, corner, gr: p.r, gc: p.c } as BoardSquare;
   });
 }

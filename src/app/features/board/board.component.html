@@ -13,15 +13,15 @@
           <div class="stripe"></div>
         }
         @if (sq.kind === 'coupon') {
-          <svg class="snips" viewBox="0 0 24 28" aria-hidden="true" focusable="false">
-            <path class="blade" d="M7.4 22.6 L15.4 4.2" />
-            <path class="blade" d="M16.6 22.6 L8.6 4.2" />
-            <circle class="pivot" cx="12" cy="14" r="1.2" />
-            <circle class="loop loop-a" cx="7.2" cy="23.2" r="3" />
-            <circle class="loop loop-b" cx="16.8" cy="23.2" r="3" />
-          </svg>
+          <div class="snips">
+            <img ngSrc="img/scissors.png" alt="" fill />
+          </div>
         }
-        @if (sq.icon) {
+        @if (sq.img) {
+          <div class="icon img">
+            <img [ngSrc]="sq.img" [alt]="sq.label" fill />
+          </div>
+        } @else if (sq.icon) {
           <div class="icon"><app-item-icon [key]="sq.icon" /></div>
         }
         <div class="label">{{ sq.label }}</div>
