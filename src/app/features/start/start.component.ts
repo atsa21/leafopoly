@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { GameService } from '@core/services/game.service';
 import { MultiplayerService } from '@core/services/multiplayer.service';
 import { LogoComponent } from '@shared/logo/logo.component';
@@ -12,6 +13,7 @@ import { LogoComponent } from '@shared/logo/logo.component';
 export class StartComponent {
   protected game = inject(GameService);
   protected mp = inject(MultiplayerService);
+  private router = inject(Router);
 
   protected panel = signal<'choose' | 'friends'>('choose');
   protected joinId = signal('');
@@ -24,6 +26,7 @@ export class StartComponent {
 
   solo(): void {
     this.game.startSolo();
+    this.router.navigate(['/']);
   }
 
   friends(): void {
@@ -46,15 +49,19 @@ export class StartComponent {
 
   enter(): void {
     this.game.enterGame();
+    this.router.navigate(['/']);
   }
 
   join(): void {
     const id = this.joinId().trim().toLowerCase();
-    if (id) this.game.joinRoom(id);
+    if (!id) return;
+    this.game.joinRoom(id);
+    this.router.navigate(['/']);
   }
 
   resume(): void {
     this.game.resume();
+    this.router.navigate(['/']);
   }
 
   async copy(): Promise<void> {

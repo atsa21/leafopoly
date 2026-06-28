@@ -1,4 +1,4 @@
-import { FirebaseOptions } from 'firebase/app';
+import type { FirebaseOptions } from 'firebase/app';
 
 export const environment = {
   production: false,

@@ -1,14 +1,6 @@
 import { Service, signal } from '@angular/core';
-import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
-import {
-  doc,
-  Firestore,
-  getFirestore,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-  Unsubscribe,
-} from 'firebase/firestore';
+import type { FirebaseApp } from 'firebase/app';
+import type { Firestore, Unsubscribe } from 'firebase/firestore';
 import { firebaseConfig, firebaseReady } from '../firebase.config';
 import { Player } from '../models';
 
@@ -28,16 +20,12 @@ export type ConnStatus = 'idle' | 'hosting' | 'joining' | 'connected' | 'error';
 
 /** Ephemeral turn event so the watching player can replay the tumble + walk (or a skip). */
 export interface RollAnim {
-  n: number; // dice result (0 when skipping)
-  slot: number; // who is acting
-  nonce: number; // distinguishes one event from the next
-  skip?: boolean; // true when the player skipped instead of rolling
+  n: number;
+  slot: number; 
+  nonce: number;
+  skip?: boolean;
 }
 
-/**
- * Thin Firestore wrapper. Knows nothing about game rules — GameService drives it
- * by pushing snapshots and handling `onRemote`. One document per match.
- */
 @Service()
 export class MultiplayerService {
   online = signal(false);
@@ -52,12 +40,13 @@ export class MultiplayerService {
   onAnim: ((anim: RollAnim) => void) | null = null;
 
   private db: Firestore | null = null;
+  private fs: typeof import('firebase/firestore') | null = null;
   private unsub: Unsubscribe | null = null;
   private seq = 0;
   private animCounter = 0;
   private lastAnimNonce = -1;
+  private gen = 0;
 
-  /** Online play is available only once Firebase config is filled in. */
   get available(): boolean {
     return firebaseReady();
   }
@@ -69,7 +58,8 @@ export class MultiplayerService {
     this.online.set(true);
     this.status.set('hosting');
     this.seq = 1;
-    await setDoc(this.ref(id), { ...state, seq: 1, by: 0 } satisfies MatchSnapshot);
+    const { db, fs } = await this.ensure();
+    await fs.setDoc(fs.doc(db, 'matches', id), { ...state, seq: 1, by: 0 } satisfies MatchSnapshot);
     this.listen(id);
     return id;
   }
@@ -95,7 +85,8 @@ export class MultiplayerService {
     const id = this.matchId();
     if (!this.online() || !id) return;
     this.seq += 1;
-    await setDoc(this.ref(id), { ...state, seq: this.seq, by: this.mySlot() } satisfies MatchSnapshot);
+    const { db, fs } = await this.ensure();
+    await fs.setDoc(fs.doc(db, 'matches', id), { ...state, seq: this.seq, by: this.mySlot() } satisfies MatchSnapshot);
   }
 
   /** Broadcast a roll result on a side channel (does not touch authoritative state). */
@@ -104,10 +95,12 @@ export class MultiplayerService {
     if (!this.online() || !id) return;
     // slot-prefixed so the two players' nonces never collide and always rise.
     const nonce = this.mySlot() * 1_000_000 + ++this.animCounter;
-    await updateDoc(this.ref(id), { anim: { ...roll, nonce } });
+    const { db, fs } = await this.ensure();
+    await fs.updateDoc(fs.doc(db, 'matches', id), { anim: { ...roll, nonce } });
   }
 
   leave(): void {
+    this.gen++; // invalidate any in-flight listen()
     this.unsub?.();
     this.unsub = null;
     this.online.set(false);
@@ -118,16 +111,21 @@ export class MultiplayerService {
     this.lastAnimNonce = -1;
   }
 
-  private listen(id: string): void {
+  private async listen(id: string): Promise<void> {
     this.unsub?.();
-    this.unsub = onSnapshot(this.ref(id), (d) => {
+    this.unsub = null;
+    const myGen = ++this.gen;
+    const { db, fs } = await this.ensure();
+    if (this.gen !== myGen) return;
+
+    const ref = fs.doc(db, 'matches', id);
+    this.unsub = fs.onSnapshot(ref, (d) => {
       const data = d.data() as MatchSnapshot | undefined;
       if (!data) return;
 
       if (this.status() === 'joining') {
         this.status.set('connected');
-        // Announce presence so the host knows the joiner arrived.
-        updateDoc(this.ref(id), { joined: true }).catch(() => {});
+        fs.updateDoc(ref, { joined: true }).catch(() => {});
       }
       if (this.mySlot() === 0 && data.joined) {
         this.peerJoined.set(true);
@@ -149,19 +147,20 @@ export class MultiplayerService {
     }, () => this.status.set('error'));
   }
 
-  private ref(id: string) {
-    return doc(this.ensureDb(), 'matches', id);
-  }
 
-  private ensureDb(): Firestore {
-    if (!this.db) {
+  private async ensure(): Promise<{ db: Firestore; fs: typeof import('firebase/firestore') }> {
+    if (!this.db || !this.fs) {
+      const [{ getApps, initializeApp }, fs] = await Promise.all([
+        import('firebase/app'),
+        import('firebase/firestore'),
+      ]);
       const app: FirebaseApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-      this.db = getFirestore(app);
+      this.db = fs.getFirestore(app);
+      this.fs = fs;
     }
-    return this.db;
+    return { db: this.db, fs: this.fs };
   }
 
-  /** Short, link-friendly id (no look-alike characters). */
   private genId(): string {
     const alphabet = 'abcdefghjkmnpqrstuvwxyz23456789';
     let s = '';
