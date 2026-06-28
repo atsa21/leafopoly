@@ -11,6 +11,18 @@
   }
 }
 
+.window-scene {
+  position: absolute;
+  left: 26.67%;
+  top: 18.18%;
+  width: 45%;
+  height: 61.36%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/img/background_window.png');
+  background-repeat: repeat;
+}
+
 .lamp-glow {
   position: absolute;
   left: 50%;

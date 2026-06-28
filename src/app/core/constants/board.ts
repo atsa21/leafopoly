@@ -90,7 +90,7 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
           label = 'LEMONADE';
           sub = 'sip & rest';
           accent = '#caa42e';
-          icon = 'lemonade';
+          img = 'img/lemonade.png';
           msg = 'lemonade stand — a sweet little break.';
         } else {
           label = 'RAINY DAY';
