@@ -201,6 +201,66 @@ header {
   }
 }
 
+.tally {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  li {
+    flex: 1 1 0;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--paper-ticket);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xs);
+    opacity: 0.7;
+
+    &.done {
+      opacity: 1;
+      border-color: var(--leaf);
+    }
+  }
+
+  .tlabel {
+    flex: 1;
+    text-align: left;
+    font-family: var(--font-script);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+
+  .tcount {
+    white-space: nowrap;
+    font-family: var(--font-type);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .tcheck {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--line);
+    color: var(--paper-bright);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  li.done .tcheck {
+    background: var(--leaf);
+  }
+}
+
 .hint {
   text-align: center;
   font-size: 13px;

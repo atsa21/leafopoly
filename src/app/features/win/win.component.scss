@@ -99,13 +99,19 @@ h2 {
   }
 }
 
-.primary {
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.primary,
+.secondary {
   font-family: var(--font-script);
   font-weight: 700;
   font-size: 18px;
-  color: var(--paper-bright);
-  background: var(--leaf);
-  border: none;
   border-radius: var(--r-md);
   padding: var(--space-3) var(--space-5);
   cursor: pointer;
@@ -114,6 +120,18 @@ h2 {
   &:active {
     transform: translateY(1px);
   }
+}
+
+.primary {
+  color: var(--paper-bright);
+  background: var(--leaf);
+  border: none;
+}
+
+.secondary {
+  color: var(--ink-soft);
+  background: var(--paper-ticket);
+  border: 1px solid var(--line-strong);
 }
 
 @keyframes pop {

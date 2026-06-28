@@ -25,7 +25,7 @@ const DEFS: Array<Partial<BoardSquare>> = [
   { kind: 'shop', shop: EShopCategory.Furniture },
   { kind: 'leaf', delta: -4 },
   { kind: 'shop', shop: EShopCategory.Decor },
-  { kind: 'coupon' },
+  { kind: 'shop', shop: EShopCategory.Pet },
   { kind: 'shop', shop: EShopCategory.Room },
 ];
 

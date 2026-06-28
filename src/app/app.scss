@@ -102,6 +102,23 @@
   margin-top: 2px;
 }
 
+.pitems {
+  flex: none;
+  align-self: flex-start;
+  padding-top: 6px;
+  font-family: var(--font-type);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+
+  strong {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+}
+
 .phead button {
   flex: none;
   align-self: flex-start;
@@ -352,6 +369,39 @@
   font-size: 12px;
   color: var(--ink-muted);
   margin-top: var(--space-2);
+}
+
+.pwin {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.pwin-bar {
+  flex: 1;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--paper-ticket);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.pwin-fill {
+  display: block;
+  height: 100%;
+  background: var(--leaf);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.pwin-num {
+  flex: none;
+  font-family: var(--font-type);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
 
 .crier {

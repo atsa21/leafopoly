@@ -20,7 +20,6 @@ export class WinComponent {
     return i === null ? 'var(--ink)' : (this.game.players()[i]?.color ?? 'var(--ink)');
   });
 
-  /** Per-category collection progress for the winning player. */
   protected rows = computed(() => {
     const i = this.game.winner();
     if (i === null) return [];
@@ -32,6 +31,11 @@ export class WinComponent {
       goal,
     }));
   });
+
+  seeRoom(): void {
+    const i = this.game.winner();
+    if (i !== null) this.game.openRoom(i);
+  }
 
   playAgain(): void {
     this.game.newGame();

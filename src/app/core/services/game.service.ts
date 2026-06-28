@@ -108,6 +108,14 @@ export class GameService {
     return tally;
   }
 
+  /** Items that count toward winning: each category capped at the goal, summed across all categories. */
+  winProgress(p: Player): { got: number; total: number } {
+    const tally = this.categoryTally(p);
+    const cats = Object.values(EShopCategory);
+    const got = cats.reduce((sum, c) => sum + Math.min(tally[c], this.categoryGoal), 0);
+    return { got, total: this.categoryGoal * cats.length };
+  }
+
   winner = computed<number | null>(() => {
     const players = this.players();
     const cats = Object.values(EShopCategory);

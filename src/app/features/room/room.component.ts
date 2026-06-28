@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   inject,
   signal,
   ElementRef,
@@ -10,7 +11,7 @@ import {
 import { GameService } from '@core/services/game.service';
 import { SoundService } from '@core/services/sound.service';
 import { ItemIconComponent } from '@shared/icons/item-icon.component';
-import { ITEMS } from '@core/constants';
+import { ITEMS, CATEGORY_LABELS } from '@core/constants';
 
 import { Player } from '@core/models';
 
@@ -26,6 +27,19 @@ export class RoomComponent {
   private destroyRef = inject(DestroyRef);
   surface = viewChild<ElementRef<HTMLDivElement>>('surface');
   owner = (): Player => this.game.players()[this.game.roomOwner()];
+
+  protected rows = computed(() => {
+    const p = this.game.players()[this.game.roomOwner()];
+    if (!p) return [];
+    const tally = this.game.categoryTally(p);
+    const goal = this.game.categoryGoal;
+    return CATEGORY_LABELS.map((c) => ({
+      label: c.label,
+      count: tally[c.key],
+      goal,
+      done: tally[c.key] >= goal,
+    }));
+  });
 
   private readonly BASE_W = 720;
   private readonly ROOM_H = 440;
