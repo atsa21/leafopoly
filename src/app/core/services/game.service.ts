@@ -40,6 +40,8 @@ export class GameService {
   leafLoss = signal<{ slot: number; amount: number; id: number } | null>(null);
 
   activeShop = signal<EShopCategory | null>(null);
+  shopArmed = signal(false);
+  private shopArmTimer: ReturnType<typeof setTimeout> | undefined;
   cutStep = signal(0);
   couponVal = signal(0);
   couponDone = signal(false);
@@ -61,16 +63,28 @@ export class GameService {
     this.mp.onRemote = (s) => this.applyRemote(s);
     this.mp.onAnim = (a) => this.playWatch(a);
 
-    afterNextRender(() => {
-      this.loadSettings();
-      const saved = this.load();
-      if (saved) {
-        this.players.set(saved);
-        this.hasSave.set(true);
-      } else {
-        this.players.set(this.freshPlayers());
-      }
-    });
+    afterNextRender(() => this.ensureLoaded());
+  }
+
+  private loaded = false;
+
+  /**
+   * Load settings and any saved game from localStorage. Safe to call multiple
+   * times — it runs at most once. The guard calls this synchronously on route
+   * activation so a page reload on `/game` can resume the save instead of being
+   * bounced to the start screen (`afterNextRender` fires too late for that).
+   */
+  ensureLoaded(): void {
+    if (this.loaded) return;
+    this.loaded = true;
+    this.loadSettings();
+    const saved = this.load();
+    if (saved) {
+      this.players.set(saved);
+      this.hasSave.set(true);
+    } else {
+      this.players.set(this.freshPlayers());
+    }
   }
 
   cur = computed(() => this.players()[this.current()]);
@@ -91,16 +105,12 @@ export class GameService {
     return Array.from({ length: 9 }, (_, i) => set.has(i));
   });
 
-  readonly categoryGoal = CATEGORY_GOAL;
+  categoryGoal = signal(CATEGORY_GOAL);
 
   categoryTally(p: Player): Record<EShopCategory, number> {
-    const tally = {
-      [EShopCategory.Furniture]: 0,
-      [EShopCategory.Decor]: 0,
-      [EShopCategory.Room]: 0,
-      [EShopCategory.Pet]: 0,
-      [EShopCategory.Other]: 0,
-    };
+    const tally = Object.fromEntries(
+      Object.values(EShopCategory).map((c) => [c, 0]),
+    ) as Record<EShopCategory, number>;
     for (const item of p.room) {
       const cat = ITEM_CATEGORY[item.key];
       if (cat) tally[cat]++;
@@ -112,8 +122,9 @@ export class GameService {
   winProgress(p: Player): { got: number; total: number } {
     const tally = this.categoryTally(p);
     const cats = Object.values(EShopCategory);
-    const got = cats.reduce((sum, c) => sum + Math.min(tally[c], this.categoryGoal), 0);
-    return { got, total: this.categoryGoal * cats.length };
+    const goal = this.categoryGoal();
+    const got = cats.reduce((sum, c) => sum + Math.min(tally[c], goal), 0);
+    return { got, total: goal * cats.length };
   }
 
   winner = computed<number | null>(() => {
@@ -121,7 +132,7 @@ export class GameService {
     const cats = Object.values(EShopCategory);
     for (let i = 0; i < players.length; i++) {
       const tally = this.categoryTally(players[i]);
-      if (cats.every((c) => tally[c] >= this.categoryGoal)) return i;
+      if (cats.every((c) => tally[c] >= this.categoryGoal())) return i;
     }
     return null;
   });
@@ -155,8 +166,7 @@ export class GameService {
     this.mode.set('multi');
     this.beginFresh(this.playerNames());
     const id = await this.hostMatch();
-    const { origin, pathname } = window.location;
-    this.inviteLink.set(`${origin}${pathname}?m=${id}`);
+    this.inviteLink.set(`${document.baseURI}game?code=${id}`);
     this.save();
     return id;
   }
@@ -180,6 +190,16 @@ export class GameService {
       this.mode.set('solo');
     }
     this.started.set(true);
+  }
+
+  exitToStart(): void {
+    this.savedMode = this.mode();
+    this.savedMatchId = this.mp.matchId();
+    this.savedSlot = this.mp.mySlot();
+    this.save();
+    this.mp.leave();
+    this.started.set(false);
+    this.hasSave.set(true);
   }
 
   private freshPlayers(names: string[] = this.playerNames()): Player[] {
@@ -253,10 +273,14 @@ export class GameService {
       const s = JSON.parse(raw) as {
         startingLeaves?: unknown;
         passGoBonus?: unknown;
+        categoryGoal?: unknown;
         playerNames?: unknown;
       };
       if (Number.isFinite(s.startingLeaves)) this.startingLeaves.set(s.startingLeaves as number);
       if (Number.isFinite(s.passGoBonus)) this.passGoBonus.set(s.passGoBonus as number);
+      if (Number.isFinite(s.categoryGoal)) {
+        this.categoryGoal.set(Math.min(4, Math.max(1, s.categoryGoal as number)));
+      }
       if (Array.isArray(s.playerNames) && s.playerNames.length) {
         this.playerNames.set(
           DEFAULT_NAMES.map((d, i) => {
@@ -275,6 +299,7 @@ export class GameService {
         JSON.stringify({
           startingLeaves: this.startingLeaves(),
           passGoBonus: this.passGoBonus(),
+          categoryGoal: this.categoryGoal(),
           playerNames: this.playerNames(),
         }),
       );
@@ -288,7 +313,12 @@ export class GameService {
   closeSettings() {
     this.view.set('board');
   }
-  applySettings(s: { name: string; startingLeaves: number; passGoBonus: number }) {
+  applySettings(s: {
+    name: string;
+    startingLeaves: number;
+    passGoBonus: number;
+    categoryGoal: number;
+  }) {
     const slot = this.mySlot();
     const name = s.name.trim() || DEFAULT_NAMES[slot] || 'Player';
     this.playerNames.update((names) => {
@@ -298,6 +328,7 @@ export class GameService {
     });
     this.startingLeaves.set(Math.max(0, Math.round(s.startingLeaves) || 0));
     this.passGoBonus.set(Math.max(0, Math.round(s.passGoBonus) || 0));
+    this.categoryGoal.set(Math.min(4, Math.max(1, Math.round(s.categoryGoal) || 1)));
     this.saveSettings();
 
     this.players.update((list) =>
@@ -433,7 +464,7 @@ export class GameService {
     const sq = this.board()[this.cur().pos];
     if (sq.kind === 'shop') {
       this.activeShop.set(sq.shop!);
-      this.view.set('shop');
+      this.openShop();
     } else if (sq.kind === 'coupon') {
       this.cutStep.set(0);
       this.couponDone.set(false);
@@ -457,6 +488,8 @@ export class GameService {
         }));
       if (d > 0) this.gainLeaves(this.current(), d);
       else if (d < 0) this.loseLeaves(this.current(), -d);
+      if (sq.kind === 'rest' && sq.category === 'rain') this.sound.rain();
+      else if (sq.kind === 'rest' && sq.category === 'lemonade') this.sound.lemonade();
       this.toast(sq.msg || 'a quiet square.');
       this.endTurn();
     }
@@ -531,7 +564,15 @@ export class GameService {
     };
   }
 
+  private openShop() {
+    clearTimeout(this.shopArmTimer);
+    this.shopArmed.set(false);
+    this.view.set('shop');
+    this.shopArmTimer = setTimeout(() => this.shopArmed.set(true), 400);
+  }
+
   buy(key: string) {
+    if (this.view() !== 'shop' || !this.shopArmed() || !this.isMyTurn()) return;
     const it = ITEMS[key];
     const p = this.cur();
     const price = p.coupons.length
@@ -554,6 +595,7 @@ export class GameService {
   }
 
   leaveShop() {
+    if (this.view() !== 'shop' || !this.isMyTurn()) return;
     this.toast('left empty-handed.');
     this.endTurn();
   }
@@ -566,6 +608,7 @@ export class GameService {
   }
 
   collectCoupon() {
+    if (this.view() !== 'coupon' || !this.isMyTurn()) return;
     const v = this.couponVal();
     this.patchCurrent((p) => ({ ...p, coupons: [...p.coupons, v] }));
     this.toast('snipped a ' + v + '% coupon!');

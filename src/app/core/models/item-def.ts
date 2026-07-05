@@ -3,6 +3,4 @@ export interface ItemDef {
   name: string;
   tag: string;
   price: number;
-  size: number;
-  isRoomIcon?: boolean;
 }

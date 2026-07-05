@@ -3,6 +3,8 @@ import type { FirebaseApp } from 'firebase/app';
 import type { Firestore, Unsubscribe } from 'firebase/firestore';
 import { firebaseConfig, firebaseReady } from '../firebase.config';
 import { Player } from '../models';
+import { MatchState } from '@core/types/match-state.type';
+import { EConnectStatus } from '@core/enums/e-connect-status.enum';
 
 /** The shared truth for a match — everything else (open modals, drag state) is local. */
 export interface MatchSnapshot {
@@ -14,9 +16,6 @@ export interface MatchSnapshot {
   by: number; // slot that wrote this snapshot
   joined?: boolean; // joiner sets this so the host knows a peer connected
 }
-
-export type MatchState = Omit<MatchSnapshot, 'seq' | 'by' | 'joined'>;
-export type ConnStatus = 'idle' | 'hosting' | 'joining' | 'connected' | 'error';
 
 /** Ephemeral turn event so the watching player can replay the tumble + walk (or a skip). */
 export interface RollAnim {
@@ -31,7 +30,7 @@ export class MultiplayerService {
   online = signal(false);
   matchId = signal<string | null>(null);
   mySlot = signal(0);
-  status = signal<ConnStatus>('idle');
+  status = signal<EConnectStatus>(EConnectStatus.Idle);
   peerJoined = signal(false);
 
   /** Set by GameService to apply incoming snapshots from the other player. */
@@ -56,7 +55,7 @@ export class MultiplayerService {
     this.matchId.set(id);
     this.mySlot.set(0);
     this.online.set(true);
-    this.status.set('hosting');
+    this.status.set(EConnectStatus.Hosting);
     this.seq = 1;
     const { db, fs } = await this.ensure();
     await fs.setDoc(fs.doc(db, 'matches', id), { ...state, seq: 1, by: 0 } satisfies MatchSnapshot);
@@ -68,7 +67,7 @@ export class MultiplayerService {
     this.matchId.set(id);
     this.mySlot.set(1);
     this.online.set(true);
-    this.status.set('joining');
+    this.status.set(EConnectStatus.Joining);
     this.listen(id);
   }
 
@@ -76,7 +75,7 @@ export class MultiplayerService {
     this.matchId.set(id);
     this.mySlot.set(slot);
     this.online.set(true);
-    this.status.set(slot === 0 ? 'connected' : 'joining');
+    this.status.set(slot === 0 ? EConnectStatus.Connected : EConnectStatus.Joining);
     this.seq = 0;
     this.listen(id);
   }
@@ -105,7 +104,7 @@ export class MultiplayerService {
     this.unsub = null;
     this.online.set(false);
     this.matchId.set(null);
-    this.status.set('idle');
+    this.status.set(EConnectStatus.Idle);
     this.peerJoined.set(false);
     this.seq = 0;
     this.lastAnimNonce = -1;
@@ -123,13 +122,13 @@ export class MultiplayerService {
       const data = d.data() as MatchSnapshot | undefined;
       if (!data) return;
 
-      if (this.status() === 'joining') {
-        this.status.set('connected');
+      if (this.status() === EConnectStatus.Joining) {
+        this.status.set(EConnectStatus.Connected);
         fs.updateDoc(ref, { joined: true }).catch(() => {});
       }
       if (this.mySlot() === 0 && data.joined) {
         this.peerJoined.set(true);
-        if (this.status() === 'hosting') this.status.set('connected');
+        if (this.status() === EConnectStatus.Hosting) this.status.set(EConnectStatus.Connected);
       }
 
       // Replay the other player's roll (side channel, doesn't bump seq).
@@ -144,7 +143,7 @@ export class MultiplayerService {
         this.seq = data.seq;
         this.onRemote?.(data);
       }
-    }, () => this.status.set('error'));
+    }, () => this.status.set(EConnectStatus.Error));
   }
 
 

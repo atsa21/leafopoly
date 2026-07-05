@@ -3,12 +3,12 @@ import { startedGuard } from '@core/guards/started.guard';
 
 export const routes: Routes = [
   {
-    path: 'start',
+    path: '',
     loadComponent: () =>
       import('./features/start/start.component').then((m) => m.StartComponent),
   },
   {
-    path: '',
+    path: 'game',
     canActivate: [startedGuard],
     loadComponent: () =>
       import('./features/game/game.component').then((m) => m.GameComponent),

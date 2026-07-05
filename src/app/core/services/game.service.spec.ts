@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { GameService } from './game.service';
 import { MultiplayerService, MatchSnapshot } from './multiplayer.service';
 import { Player } from '../models';
+import { EShopCategory } from '../enums';
+import { SHOPS } from '../constants';
 
 function player(over: Partial<Player> = {}): Player {
   return {
@@ -72,6 +74,40 @@ describe('GameService.applyRemote', () => {
     // ...but the other player's room edit is adopted.
     expect(game.players()[1].room).toHaveLength(1);
     expect(game.players()[1].room[0].id).toBe('a');
+  });
+
+  it('ignores a repeat buy() after the first already ended the turn (double-tap / ghost click)', () => {
+    // Solo: a single player in the shop with enough leaves.
+    game.current.set(0);
+    game.players.set([player({ name: 'Me', leaves: 50 })]);
+    game.activeShop.set(EShopCategory.Comfort);
+    game.view.set('shop');
+    game.shopArmed.set(true);
+
+    const key = SHOPS[EShopCategory.Comfort].items[0].key;
+    game.buy(key);
+    // A second, already-queued tap fires before the shop DOM is torn down.
+    game.buy(key);
+
+    // Only one item was added and leaves were charged once.
+    expect(game.players()[0].room).toHaveLength(1);
+    expect(game.view()).toBe('board');
+  });
+
+  it('ignores a buy() that fires before the shop has armed (tap during the roll animation)', () => {
+    // Solo: a single player who has just landed on the shop; it has not armed yet.
+    game.current.set(0);
+    game.players.set([player({ name: 'Me', leaves: 50 })]);
+    game.activeShop.set(EShopCategory.Comfort);
+    game.view.set('shop');
+    game.shopArmed.set(false);
+
+    const key = SHOPS[EShopCategory.Comfort].items[0].key;
+    game.buy(key);
+
+    // Nothing was bought and the shop stays open for a deliberate choice.
+    expect(game.players()[0].room).toHaveLength(0);
+    expect(game.view()).toBe('shop');
   });
 
   it('fully applies a turn-handoff snapshot that arrives while it is still the opponent turn locally', () => {

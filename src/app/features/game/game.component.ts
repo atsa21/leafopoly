@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { GameService } from '@core/services/game.service';
 import { BoardComponent } from '../board/board.component';
 import { ControlsComponent } from '../controls/controls.component';
@@ -30,6 +31,12 @@ import { MuteButtonComponent } from '@shared/mute-button/mute-button.component';
 })
 export class GameComponent {
   protected game = inject(GameService);
+  private router = inject(Router);
+
+  protected backToStart() {
+    this.game.exitToStart();
+    this.router.navigate(['']);
+  }
 
   protected leafBurst(slot: number) {
     const g = this.game.leafGain();

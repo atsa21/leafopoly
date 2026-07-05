@@ -1,7 +1,9 @@
 export enum EShopCategory {
-  Furniture = 'furniture',
-  Decor = 'decor',
+  Comfort = 'comfort',
+  Study = 'study',
+  Plants = 'plants',
+  Odds = 'odds',
   Room = 'room',
   Pet = 'pet',
-  Other = 'other',
+  Bits = 'bits',
 }

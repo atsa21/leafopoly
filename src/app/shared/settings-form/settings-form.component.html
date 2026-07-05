@@ -1,0 +1,33 @@
+<div class="fields">
+  <label class="field">
+    <span>Your name</span>
+    <input type="text" autocomplete="off" [formField]="field().name" />
+  </label>
+
+  <label class="field">
+    <span>Starting leaves</span>
+    <input type="number" step="1" [formField]="field().startingLeaves" />
+    @if (field().startingLeaves().invalid()) {
+      <em class="err">Use 0 or more.</em>
+    }
+    <em class="hint">Applies when you start a new game.</em>
+  </label>
+
+  <label class="field">
+    <span>Pass-GO bonus</span>
+    <input type="number" step="1" [formField]="field().passGoBonus" />
+    @if (field().passGoBonus().invalid()) {
+      <em class="err">Use 0 or more.</em>
+    }
+    <em class="hint">Leaves collected each time you pass START.</em>
+  </label>
+
+  <label class="field">
+    <span>Items to win per category</span>
+    <input type="number" step="1" [formField]="field().categoryGoal" />
+    @if (field().categoryGoal().invalid()) {
+      <em class="err">Use between 1 and 4.</em>
+    }
+    <em class="hint">How many of each kind you must collect to win.</em>
+  </label>
+</div>

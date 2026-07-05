@@ -9,9 +9,11 @@ export const ITEM_CATEGORY: Record<string, EShopCategory> = Object.fromEntries(
 export const CATEGORY_GOAL = 3;
 
 export const CATEGORY_LABELS: { key: EShopCategory; label: string }[] = [
-  { key: EShopCategory.Furniture, label: 'Furniture' },
-  { key: EShopCategory.Decor, label: 'Decor' },
+  { key: EShopCategory.Comfort, label: 'Comfort' },
+  { key: EShopCategory.Study, label: 'Study' },
+  { key: EShopCategory.Plants, label: 'Plants' },
+  { key: EShopCategory.Odds, label: 'Odds & Art' },
   { key: EShopCategory.Room, label: 'Room' },
   { key: EShopCategory.Pet, label: 'Pets' },
-  { key: EShopCategory.Other, label: 'Sundries' },
+  { key: EShopCategory.Bits, label: 'Bits & Bobs' },
 ];

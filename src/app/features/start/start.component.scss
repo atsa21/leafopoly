@@ -126,6 +126,36 @@ h1 {
   }
 }
 
+.settings-link {
+  margin-top: var(--space-3);
+  width: 100%;
+  font-family: var(--font-type);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-muted);
+  background: none;
+  border: none;
+  padding: var(--space-2);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--ink);
+  }
+}
+
+/* ---- solo setup ---------------------------------------------- */
+.solo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  .row {
+    align-items: center;
+  }
+}
+
 /* ---- room controls ------------------------------------------- */
 .friends {
   display: flex;

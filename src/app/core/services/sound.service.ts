@@ -161,6 +161,132 @@ export class SoundService {
     src.stop(t + dur);
   }
 
+  /** Cosy rainfall — a soft filtered wash with a few scattered droplet plinks. */
+  rain(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 2.4;
+
+    // steady rain wash: filtered noise fading in and out
+    const frames = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    data.forEach((_, i) => {
+      data[i] = Math.random() * 2 - 1;
+    });
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 500;
+
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 2600;
+    lp.Q.value = 0.6;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.13, t + 0.5);
+    g.gain.setValueAtTime(0.13, t + dur - 0.7);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    src.connect(hp).connect(lp).connect(g).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur);
+
+    // a handful of gentle droplet plinks scattered through the shower
+    const drops = 7;
+    for (let i = 0; i < drops; i++) {
+      const start = t + 0.3 + (i / drops) * (dur - 0.8) + Math.random() * 0.12;
+      const freq = 1400 + Math.random() * 1600;
+
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, start);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.6, start + 0.05);
+
+      const dg = ctx.createGain();
+      dg.gain.setValueAtTime(0.0001, start);
+      dg.gain.exponentialRampToValueAtTime(0.03 + Math.random() * 0.02, start + 0.005);
+      dg.gain.exponentialRampToValueAtTime(0.0001, start + 0.08);
+
+      osc.connect(dg).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.09);
+    }
+  }
+
+  /** Sweet lemonade break — icy clinks over a soft fizzy sparkle. */
+  lemonade(): void {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 1.3;
+
+    // soft fizz: high, sparse noise crackle that settles like carbonation
+    const frames = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    data.forEach((_, i) => {
+      const p = i / frames;
+      const pop = Math.random() < 0.25 ? 1 : 0.15;
+      data[i] = (Math.random() * 2 - 1) * pop * Math.exp(-1.6 * p);
+    });
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 4500;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.05, t + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+    src.connect(hp).connect(g).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur);
+
+    // a few bright glassy clinks — ice cubes settling in the glass
+    const clinks = [0, 0.14, 0.33];
+    clinks.forEach((offset, i) => {
+      const start = t + offset;
+      const freq = 2100 + i * 380 + Math.random() * 120;
+
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+
+      // a faint overtone gives the clink a glassy ring
+      const ring = ctx.createOscillator();
+      ring.type = 'sine';
+      ring.frequency.value = freq * 2.76;
+
+      const cg = ctx.createGain();
+      cg.gain.setValueAtTime(0.0001, start);
+      cg.gain.exponentialRampToValueAtTime(0.12, start + 0.004);
+      cg.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
+
+      const rg = ctx.createGain();
+      rg.gain.setValueAtTime(0.0001, start);
+      rg.gain.exponentialRampToValueAtTime(0.04, start + 0.004);
+      rg.gain.exponentialRampToValueAtTime(0.0001, start + 0.14);
+
+      osc.connect(cg).connect(ctx.destination);
+      ring.connect(rg).connect(ctx.destination);
+      osc.start(start);
+      ring.start(start);
+      osc.stop(start + 0.24);
+      ring.stop(start + 0.24);
+    });
+  }
+
   pickUp(): void {
     const ctx = this.audio();
     if (!ctx) return;

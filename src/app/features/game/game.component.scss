@@ -326,18 +326,14 @@
 
 .pleaves .leaf-icon {
   display: inline-block;
-  width: 24px;
+  width: 36px;
   height: 36px;
   align-self: center;
-
-  img {
-    width: 24px;
-    height: 36px;
-  }
 }
 
 .pleaves-num {
-  font-size: 34px;
+  padding-top: 6px;
+  font-size: 32px;
 }
 
 .pleaves small {

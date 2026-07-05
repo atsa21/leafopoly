@@ -5,22 +5,14 @@
       <button type="button" (click)="game.closeRoom()">Close ×</button>
     </header>
 
-    <div #surface class="room" (pointermove)="onMove($event)" (pointerup)="onUp($event)">
-      <div class="wall ceil"></div>
-      <div class="wall wleft"></div>
-      <div class="wall wright"></div>
-      <div class="wall floor"></div>
-      <div class="back"></div>
-
-      @for (r of owner().room; track r.id) {
-        <app-room-item
-          [item]="r"
-          [scale]="scale()"
-          [isMobile]="isMobile()"
-          [canEdit]="game.canEditRoom()"
-          (pickup)="onDown($event, r.id)"
-        />
-      }
+    <div class="room">
+      <app-room-3d
+        [items]="owner().room"
+        [canEdit]="game.canEditRoom()"
+        (picked)="onPick($event)"
+        (moved)="onMoved($event)"
+        (dropped)="onDrop()"
+      />
 
       @if (owner().room.length === 0) {
         <div class="empty">

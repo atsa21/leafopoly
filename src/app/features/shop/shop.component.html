@@ -27,14 +27,14 @@
           <div class="tag">{{ it.tag }}</div>
           <div class="price">
             <span class="leaf-icon" aria-hidden="true">
-              <img src="img/leaf.png" alt="leaf"/>
+              <app-item-icon key="leaf" [viewBox]="'0 0 30 30'" />
             </span>
             @if (it.disc) {
               <s>{{ it.price }}</s>
             }
             <b>{{ it.disp }}</b>
           </div>
-          <button type="button" [disabled]="!it.afford" (click)="game.buy(it.key)">
+          <button type="button" [disabled]="!it.afford || !game.shopArmed()" (click)="game.buy(it.key)">
             {{ it.afford ? 'Buy it' : 'too dear' }}
           </button>
         </div>

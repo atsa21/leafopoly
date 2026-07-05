@@ -9,9 +9,6 @@ app-item-icon,
   display: block;
 }
 
-// `crisp`: vector-effect ignores the viewBox→viewport scale, so 2.3 user units
-// always paint as ~2.3 device pixels. A placed item can shrink to a fraction of
-// the shop icon yet keep the exact same line weight.
 app-item-icon.crisp .icon-host svg * {
   vector-effect: non-scaling-stroke;
 }

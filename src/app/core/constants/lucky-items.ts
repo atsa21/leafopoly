@@ -1,1 +1,1 @@
-export const LUCKY_ITEMS = ['teddy', 'plant', 'poster', 'cactus', 'lamp'];
+export const LUCKY_ITEMS = ['plant', 'poster', 'cactus', 'lamp'];

@@ -45,49 +45,12 @@ header {
   position: relative;
   width: 100%;
   max-width: 720px;
-  aspect-ratio: 720 / 440;
+  aspect-ratio: 720 / 640;
   margin: 0 auto;
   overflow: hidden;
-  background: #e7dcc0;
-  border-radius: 4px;
+  background: var(--paper);
   touch-action: none;
   user-select: none;
-  box-shadow: inset 0 0 40px rgba(60, 40, 15, 0.3);
-}
-
-.wall {
-  position: absolute;
-  inset: 0;
-}
-
-// Corners as percentages of the 720×440 box so the walls flex with the room.
-.ceil {
-  background: #efe7d2;
-  clip-path: polygon(0 0, 100% 0, 91.94% 13.18%, 8.06% 13.18%);
-}
-
-.wleft {
-  background: #d9cdac;
-  clip-path: polygon(0 0, 8.06% 13.18%, 8.06% 86.82%, 0 100%);
-}
-
-.wright {
-  background: #cfc1a0;
-  clip-path: polygon(100% 0, 91.94% 13.18%, 91.94% 86.82%, 100% 100%);
-}
-
-.floor {
-  background: linear-gradient(#cdb588, #c0a673);
-  clip-path: polygon(8.06% 86.82%, 91.94% 86.82%, 100% 100%, 0 100%);
-}
-
-.back {
-  position: absolute;
-  left: 8.06%;
-  top: 13.18%;
-  width: 83.89%;
-  height: 73.64%;
-  background: repeating-linear-gradient(#e9dec2 0 30px, #e5d9ba 30px 31px);
 }
 
 .empty {
@@ -98,7 +61,7 @@ header {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  color: var(--ink-muted);
+  color: var(--paper);
   font-family: var(--font-script);
   font-size: 24px;
   pointer-events: none;

@@ -4,27 +4,27 @@ import { SHOPS } from './shops';
 
 const DEFS: Array<Partial<BoardSquare>> = [
   { kind: 'start' },
-  { kind: 'shop', shop: EShopCategory.Furniture },
+  { kind: 'shop', shop: EShopCategory.Comfort },
   { kind: 'coupon' },
-  { kind: 'shop', shop: EShopCategory.Decor },
+  { kind: 'shop', shop: EShopCategory.Study },
   { kind: 'leaf', delta: 5 },
-  { kind: 'shop', shop: EShopCategory.Room },
+  { kind: 'shop', shop: EShopCategory.Plants },
   { kind: 'rest', category: 'rain' },
-  { kind: 'shop', shop: EShopCategory.Pet },
-  { kind: 'shop', shop: EShopCategory.Other },
+  { kind: 'shop', shop: EShopCategory.Odds },
+  { kind: 'shop', shop: EShopCategory.Room },
   { kind: 'leaf', delta: -3 },
-  { kind: 'shop', shop: EShopCategory.Furniture },
+  { kind: 'shop', shop: EShopCategory.Pet },
   { kind: 'luckyfind' },
   { kind: 'rest', category: 'lemonade' },
-  { kind: 'shop', shop: EShopCategory.Decor },
+  { kind: 'shop', shop: EShopCategory.Bits },
   { kind: 'leaf', delta: 6 },
-  { kind: 'shop', shop: EShopCategory.Room },
+  { kind: 'shop', shop: EShopCategory.Comfort },
   { kind: 'coupon' },
-  { kind: 'shop', shop: EShopCategory.Other },
+  { kind: 'shop', shop: EShopCategory.Study },
   { kind: 'rest', category: 'rain' },
-  { kind: 'shop', shop: EShopCategory.Furniture },
+  { kind: 'shop', shop: EShopCategory.Plants },
   { kind: 'leaf', delta: -4 },
-  { kind: 'shop', shop: EShopCategory.Decor },
+  { kind: 'shop', shop: EShopCategory.Odds },
   { kind: 'shop', shop: EShopCategory.Pet },
   { kind: 'shop', shop: EShopCategory.Room },
 ];
@@ -53,12 +53,12 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
         label = 'START';
         sub = 'collect ' + passGoBonus;
         accent = '#5d7d39';
-        img = 'img/tree.png';
+        icon = 'tree';
         break;
       case 'shop':
         const s = SHOPS[d.shop!];
         label = s.name;
-        sub = 'tap to shop';
+        sub = 'shop';
         accent = s.accent;
         icon = s.items[0].key;
         category = s.category;
@@ -75,13 +75,13 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
           label = 'LEAF PILE';
           sub = '+' + d.delta + ' leaves';
           accent = '#5d7d39';
-          img = 'img/leaves.png';
+          icon = 'leaves';
           msg = 'found ' + d.delta + ' leaves on the path!';
         } else {
           label = 'OOPS';
           sub = d.delta + ' leaves';
           accent = '#9a4036';
-          img = 'img/gust.png';
+          icon = 'gust';
           msg = 'a gust blew some leaves away (' + d.delta + ').';
         }
         break;
@@ -90,13 +90,13 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
           label = 'LEMONADE';
           sub = 'sip & rest';
           accent = '#caa42e';
-          img = 'img/lemonade.png';
+          icon = 'lemonade';
           msg = 'lemonade stand — a sweet little break.';
         } else {
           label = 'RAINY DAY';
           sub = 'stay cosy';
           accent = '#5b7287';
-          img = 'img/rain.png';
+          icon = 'rain';
           msg = 'rainy day — cosy indoors for a moment.';
         }
         break;
@@ -104,7 +104,7 @@ export function buildBoard(passGoBonus: number): BoardSquare[] {
         label = 'LUCKY FIND';
         sub = 'free for your room';
         accent = '#7a9a4e';
-        img = 'img/gift.png';
+        icon = 'gift';
     }
 
     return { ...d, i, label, sub, accent, icon, img, msg, category, corner, gr: p.r, gc: p.c } as BoardSquare;

@@ -24,7 +24,7 @@ export class WinComponent {
     const i = this.game.winner();
     if (i === null) return [];
     const tally = this.game.categoryTally(this.game.players()[i]);
-    const goal = this.game.categoryGoal;
+    const goal = this.game.categoryGoal();
     return CATEGORY_LABELS.map((c) => ({
       label: c.label,
       count: tally[c.key],
