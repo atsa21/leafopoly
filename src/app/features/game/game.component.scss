@@ -51,7 +51,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 22px;
 }
@@ -65,7 +65,7 @@
 }
 
 .pname {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 24px;
 }
@@ -121,7 +121,7 @@
   align-items: baseline;
   gap: var(--space-2);
   margin-top: var(--space-3);
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   color: var(--leaf);
 }
@@ -140,7 +140,7 @@
   position: absolute;
   left: 34px;
   top: 2px;
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 26px;
   white-space: nowrap;
@@ -421,7 +421,7 @@
 }
 
 .new {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 18px;
   color: var(--ink-soft);
@@ -453,7 +453,7 @@
   z-index: 30;
   background: var(--ink);
   color: var(--ink-inverse);
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-size: 21px;
   padding: var(--space-3) var(--space-6);
   border-radius: var(--r-pill);

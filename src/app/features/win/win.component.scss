@@ -74,7 +74,7 @@ h2 {
   .tlabel {
     flex: 1;
     text-align: left;
-    font-family: var(--font-script);
+    font-family: var(--font-type);
     font-weight: 700;
     font-size: 16px;
     color: var(--ink-soft);
@@ -109,7 +109,7 @@ h2 {
 
 .primary,
 .secondary {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 18px;
   border-radius: var(--r-md);

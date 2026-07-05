@@ -31,7 +31,7 @@ header {
   }
 
   button {
-    font-family: var(--font-script);
+    font-family: var(--font-type);
     font-weight: 700;
     font-size: 18px;
     color: var(--berry);
@@ -45,7 +45,7 @@ header {
   position: relative;
   width: 100%;
   max-width: 720px;
-  aspect-ratio: 720 / 640;
+  aspect-ratio: 720 / 540;
   margin: 0 auto;
   overflow: hidden;
   background: var(--paper);
@@ -62,7 +62,7 @@ header {
   justify-content: center;
   gap: var(--space-2);
   color: var(--paper);
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-size: 24px;
   pointer-events: none;
 
@@ -74,15 +74,13 @@ header {
 }
 
 .tally {
-  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(80px, 1fr));
   margin: var(--space-4) 0 0;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
   gap: var(--space-2);
 
-  li {
-    flex: 1 1 0;
+  &-item {
     min-width: 120px;
     display: flex;
     align-items: center;
@@ -102,7 +100,7 @@ header {
   .tlabel {
     flex: 1;
     text-align: left;
-    font-family: var(--font-script);
+    font-family: var(--font-type);
     font-weight: 700;
     font-size: 15px;
     color: var(--ink-soft);
@@ -152,5 +150,9 @@ header {
     max-height: 90vh;
     overflow-y: auto;
     padding: var(--space-4);
+  }
+
+  .tally {
+    grid-template-columns: repeat(3, minmax(80px, 1fr));
   }
 }

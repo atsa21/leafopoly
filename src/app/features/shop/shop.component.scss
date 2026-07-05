@@ -61,7 +61,7 @@ header {
 }
 
 .purse {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 30px;
   color: var(--leaf);
@@ -123,7 +123,7 @@ header {
 }
 
 .name {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 17px;
 }
@@ -144,6 +144,7 @@ header {
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  font-family: var(--font-type);
 }
 
 .price b {
@@ -188,12 +189,12 @@ footer {
   align-items: center;
   border-top: 1px solid var(--line-strong);
   padding-top: var(--space-4);
-  font-size: 13px;
+  font-size: 16px;
   color: var(--ink-soft);
 }
 
 footer button {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 18px;
   color: var(--berry);

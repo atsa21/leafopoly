@@ -1,7 +1,6 @@
 :root {
-  --font-body: 'Newsreader', serif;
-  --font-script: 'Kalam', cursive;
-  --font-type: 'Special Elite', monospace;
+  --font-body: 'Yuyu', 'Geist Pixel', monospace;
+  --font-type: 'Geist Pixel', monospace;
   --font-display: 'Pirata One', system-ui; 
 
   /* --- Surfaces (parchment stack) -------------------------- */
@@ -9,6 +8,10 @@
   --paper-raised: #efe2c4;
   --paper-bright: #fbf8ee;
   --paper-ticket: #fbf3d6;
+
+  /* --- Surfaces (parchment stack) -------------------------- */
+  --wood: #E9BD7F;
+  --wood-deep: #D9A15E;
 
   /* --- Ink (text) ------------------------------------------ */
   --ink: #2a241d;

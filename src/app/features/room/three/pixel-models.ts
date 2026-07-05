@@ -134,12 +134,12 @@ const COZY_MAP: Record<string, { name: string; scale: number; y?: number; rotY?:
 const LAMP_SCALE = 0.16;
 
 function buildLampModel(): Group {
-  const g = createCozyModel('lamp', LAMP_SCALE) ?? new Group();
+  const g = createCozyModel('lamp', LAMP_SCALE, 0, -90) ?? new Group();
 
   const shadeCenterY = 20.75 * LAMP_SCALE;
   const shadeHeight = 9 * LAMP_SCALE;
-  const shadeRTop = 4.2 * LAMP_SCALE;
-  const shadeRBottom = 6.4 * LAMP_SCALE;
+  const shadeRTop = 2 * LAMP_SCALE;
+  const shadeRBottom = 5 * LAMP_SCALE;
 
   const shade = new Mesh(
     new CylinderGeometry(shadeRTop, shadeRBottom, shadeHeight, 8, 1, true),

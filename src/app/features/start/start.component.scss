@@ -42,7 +42,7 @@ h1 {
 }
 
 .tag {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-size: 18px;
   color: var(--ink-soft);
 }
@@ -96,7 +96,7 @@ h1 {
   }
 
   strong {
-    font-family: var(--font-script);
+    font-family: var(--font-type);
     font-weight: 700;
     font-size: 22px;
     color: var(--ink);
@@ -176,7 +176,7 @@ h1 {
 }
 
 .primary {
-  font-family: var(--font-script);
+  font-family: var(--font-type);
   font-weight: 700;
   font-size: 18px;
   color: var(--paper-bright);

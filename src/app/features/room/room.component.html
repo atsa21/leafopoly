@@ -21,15 +21,15 @@
         </div>
       }
     </div>
-    <ul class="tally">
+    <div class="tally">
       @for (r of rows(); track r.label) {
-        <li [class.done]="r.done">
+        <div class="tally-item" [class.done]="r.done">
           <span class="tlabel">{{ r.label }}</span>
           <span class="tcount">{{ r.count }} / {{ r.goal }}</span>
           <span class="tcheck" aria-hidden="true">{{ r.done ? '✓' : '' }}</span>
-        </li>
+        </div>
       }
-    </ul>
+    </div>
 
     @if (game.canEditRoom()) {
       <p class="hint">Drag your things anywhere on the walls or floor to arrange them.</p>

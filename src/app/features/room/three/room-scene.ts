@@ -28,7 +28,7 @@ const FLOOR_W = 16;
 const FLOOR_D = 12;
 
 /** Internal render downscale for the chunky "pixel" look (>=1). */
-const PIXEL_SCALE = 3;
+const PIXEL_SCALE = 2;
 
 /**
  * Wall-hung items: instead of standing on the floor they snap flush to whichever
